@@ -3,8 +3,13 @@
 @tailwind utilities;
 @import url("../styles/theme.css");
 body {
-	font-family: "Inter", sans-serif;
+	font-family: var(--font-inter), sans-serif;
 }
+
+.spaceGrotesk {
+	font-family: var(--font-spaceGrotesk), sans-serif;
+}
+
 @layer utilities {
 	.flex-center {
 		@apply flex justify-center items-center;
@@ -31,7 +36,7 @@ body {
 		@apply max-w-full prose dark:prose-p:text-light-700 dark:pros;
 	}
 	.primary-gradient {
-		background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
+		background: linear-gradient(-90deg, #117bdd 0, #85c4ff 100%);
 	}
 	.dark-gradient {
 		background: linear-gradient(
