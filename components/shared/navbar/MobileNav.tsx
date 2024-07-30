@@ -1,3 +1,5 @@
+"use client";
+import { Button } from "@/components/ui/button";
 import {
 	SheetTrigger,
 	SheetContent,
@@ -5,22 +7,115 @@ import {
 	SheetTitle,
 	SheetDescription,
 	Sheet,
+	SheetClose,
 } from "@/components/ui/sheet";
+import { sidebarLinks } from "@/constants";
+import { SignedOut } from "@clerk/nextjs";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
+
+const NavContent = () => {
+	const pathname = usePathname();
+
+	return (
+		<section
+			className="flex  flex-col gap-[1vw] pt-[6vw]
+		"
+		>
+			{sidebarLinks.map((item) => {
+				const isActive =
+					(pathname.includes(item.route) && item.route.length > 1) ||
+					pathname === item.route;
+
+				return (
+					<SheetClose asChild key={item.route}>
+						<Link
+							href={item.route}
+							className={`${
+								isActive
+									? "primary-gradient rounded-lg text-light-900"
+									: "text-dark300_light900"
+							} flex items-center justify-start gap-4 bg-transparent p-4`}
+						>
+							<Image
+								src={item.imgURL}
+								alt={item.label}
+								width={20}
+								height={20}
+								className={`${isActive ? "" : "invert-colors"}`}
+							/>
+							<p
+								className={`${
+									isActive ? "base-bold" : "base-medium"
+								}`}
+							>
+								{item.label}
+							</p>
+						</Link>
+					</SheetClose>
+				);
+			})}
+		</section>
+	);
+};
 
 const MobileNav = () => {
 	return (
 		<Sheet>
-			<SheetTrigger>Open</SheetTrigger>
-			<SheetContent>
-				<SheetHeader>
-					<SheetTitle>Are you absolutely sure?</SheetTitle>
-					<SheetDescription>
-						This action cannot be undone. This will permanently
-						delete your account and remove your data from our
-						servers.
-					</SheetDescription>
-				</SheetHeader>
+			<SheetTrigger asChild>
+				<Image
+					src="/assets/icons/hamburger.svg"
+					height={36}
+					width={36}
+					alt="menu button"
+					className="invert-colors sm:hidden"
+				/>
+			</SheetTrigger>
+			<SheetContent
+				side="left"
+				className="background-light900_dark200 border-none"
+			>
+				<Link href="/" className="flex items-center gap-1">
+					<Image
+						src="/assets/images/site-logo.svg"
+						width={32}
+						height={32}
+						alt="site logo CodeOverflow"
+					/>
+
+					<p className="h2-bold  text-dark100_light900 font-spaceGrotesk ">
+						Code<span className="text-primary-500">Overflow</span>
+					</p>
+				</Link>
+				<div className="flex h-[88svh] flex-col justify-between">
+					<SheetClose asChild>
+						<NavContent />
+					</SheetClose>
+
+					<SignedOut>
+						<div className=" flex flex-col gap-3">
+							<SheetClose asChild>
+								<Link href="/sign-in">
+									<Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
+										<span className="primary-text-gradient">
+											Log In
+										</span>
+									</Button>
+								</Link>
+							</SheetClose>
+							<SheetClose asChild>
+								<Link href="/sign-up">
+									<Button className="small-medium light-border-2 btn-tertiary text-dark400_light900 min-h-[41px] w-full rounded-lg border px-4 py-3 shadow-none">
+										Sign Up
+									</Button>
+								</Link>
+							</SheetClose>
+						</div>
+					</SignedOut>
+				</div>
+				<SheetTitle className="hidden">Menu</SheetTitle>
 			</SheetContent>
 		</Sheet>
 	);
