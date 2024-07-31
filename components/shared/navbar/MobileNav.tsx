@@ -16,7 +16,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const NavContent = () => {
+export const NavContent = () => {
 	const pathname = usePathname();
 
 	return (

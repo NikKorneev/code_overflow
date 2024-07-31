@@ -10,7 +10,21 @@ body {
 	font-family: var(--font-spaceGrotesk), sans-serif;
 }
 
+:root {
+	--sidebarWidth: minmax(min-content,var(--sidebarMaxWidth))
+	--sidebarMaxWidth: 266px;
+	--sidebarMinWidth: min-content;
+}
+
 @layer utilities {
+	.sidebar {
+		width: var(--sidebarWidth);
+	}
+	.custom-grid {
+		display: grid;
+		grid-template-columns: 266px 1fr 330px;
+	}
+
 	.flex-center {
 		@apply flex justify-center items-center;
 	}
@@ -130,5 +144,20 @@ body {
 	.no-scrollbar {
 		-ms-overflow-style: none; /* IE and Edge */
 		scrollbar-width: none; /* Firefox */
+	}
+
+	@media (min-width: 640px) and (max-width: 1024px) {
+		.custom-grid {
+			grid-template-columns: calc(var(--sidebarMinWidth) + 10px) 1fr 330px;
+		}
+	}
+	@media (min-width: 1440px) {
+		.custom-grid {
+			grid-template-columns: minmax(266px, 17vw, 500px) 1fr 330px;
+		}
+		.sidebar {
+			width: 17vw;
+			max-width: 500px;
+		}
 	}
 }
