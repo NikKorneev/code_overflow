@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import RenderTag from "../RenderTag";
 
 const SidebarQuestion = ({ text }: { text: string }) => {
 	return (
@@ -18,17 +19,6 @@ const SidebarQuestion = ({ text }: { text: string }) => {
 				height={20}
 				className="invert-colors"
 			/>
-		</Link>
-	);
-};
-
-const SidebarTag = ({ title, count }: { title: string; count: number }) => {
-	return (
-		<Link href={`/REFACTOR`} className="flex justify-between">
-			<div className="subtle-medium background-light800_dark400 inline-flex justify-between rounded-md border-transparent px-4  py-2 uppercase shadow hover:bg-slate-900/80 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 dark:border-slate-800  dark:text-[#7b8ec8]  dark:focus:ring-slate-300">
-				{title}
-			</div>
-			<p className="text-dark500_light700 text-sm">{count}+</p>
 		</Link>
 	);
 };
@@ -51,12 +41,42 @@ const RightSidebar = () => {
 					Popular Tags
 				</h2>
 				<div className="mt-7 flex flex-col gap-4 px-4">
-					<SidebarTag title="javascript" count={2000} />
-					<SidebarTag title="javascript" count={2000} />
-					<SidebarTag title="javascript" count={2000} />
-					<SidebarTag title="javascript" count={2000} />
-					<SidebarTag title="javascript" count={2000} />
-					<SidebarTag title="javascript" count={2000} />
+					<RenderTag
+						title="javascript"
+						count={2000}
+						showCount
+						id={1}
+					/>
+					<RenderTag
+						title="javascript"
+						count={2000}
+						showCount
+						id={2}
+					/>
+					<RenderTag
+						title="javascript"
+						count={2000}
+						showCount
+						id={3}
+					/>
+					<RenderTag
+						title="javascript"
+						count={2000}
+						showCount
+						id={4}
+					/>
+					<RenderTag
+						title="javascript"
+						count={2000}
+						showCount
+						id={5}
+					/>
+					<RenderTag
+						title="javascript"
+						count={2000}
+						showCount
+						id={6}
+					/>
 				</div>
 			</div>
 		</aside>
