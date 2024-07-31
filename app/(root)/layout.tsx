@@ -1,5 +1,6 @@
 import Navbar from "@/components/shared/navbar/Navbar";
 import LeftSidebar from "@/components/shared/sidebars/LeftSidebar";
+import RightSidebar from "@/components/shared/sidebars/RightSidebar";
 import React from "react";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -8,10 +9,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 			<Navbar />
 			<div className="sm:custom-grid">
 				<LeftSidebar />
-				<section className="col-start-2 col-end-3 flex min-h-screen flex-1 flex-col px-6 pb-6 pt-36 max-md:pb-14 sm:px-14">
+				<section className="col-start-2 col-end-3 flex min-h-screen flex-1 flex-col px-6 pb-6 pt-36 max-md:pb-14 sm:px-6 xl:px-10 ">
 					<div className="mx-auto w-full max-w-5xl">{children}</div>
 				</section>
-				<div>right</div>
+				<RightSidebar />
 			</div>
 		</main>
 	);

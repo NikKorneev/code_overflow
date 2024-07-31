@@ -13,10 +13,13 @@ body {
 :root {
 	--sidebarWidth: minmax(min-content,var(--sidebarMaxWidth))
 	--sidebarMaxWidth: 266px;
-	--sidebarMinWidth: min-content;
+	--sidebarMinWidth: 68px;
 }
 
 @layer utilities {
+	.right-sidebar {
+		width: 330px;
+	}
 	.sidebar {
 		width: var(--sidebarWidth);
 	}
@@ -83,13 +86,20 @@ body {
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 	}
+	.custom-scrollbar {
+		scrollbar-color: rgb(148, 148, 148) rgb(255, 255, 255);
+  		scrollbar-width: thin;
+	}
+	.custom-scrollbar-dark {
+		scrollbar-color: rgb(148, 148, 148) rgb(15 17 23 );
+	}
 	.custom-scrollbar::-webkit-scrollbar {
 		width: 3px;
 		height: 3px;
 		border-radius: 2px;
 	}
 	.custom-scrollbar::-webkit-scrollbar-track {
-		background: #ffffff;
+		@apply dark:bg-neutral-900 bg-white
 	}
 	.custom-scrollbar::-webkit-scrollbar-thumb {
 		background: #888;
@@ -148,16 +158,13 @@ body {
 
 	@media (min-width: 640px) and (max-width: 1024px) {
 		.custom-grid {
-			grid-template-columns: calc(var(--sidebarMinWidth) + 10px) 1fr 330px;
+			grid-template-columns: var(--sidebarMinWidth)  1fr;
 		}
 	}
-	@media (min-width: 1440px) {
+	@media (min-width: 1024px) and (max-width: 1280px)  {
 		.custom-grid {
-			grid-template-columns: minmax(266px, 17vw, 500px) 1fr 330px;
-		}
-		.sidebar {
-			width: 17vw;
-			max-width: 500px;
+			grid-template-columns: 266px 1fr;
 		}
 	}
+	
 }
