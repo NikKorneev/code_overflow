@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 import React from "react";
+import QuestionCard from "@/components/shared/QuestionCard";
 
 const Home = () => {
 	return (
@@ -34,6 +35,12 @@ const Home = () => {
 				/>
 			</div>
 			<HomeFilters />
+
+			<div className="mt-10 flex flex-col gap-6">
+				<QuestionCard />
+				<QuestionCard />
+				<QuestionCard />
+			</div>
 		</>
 	);
 };
