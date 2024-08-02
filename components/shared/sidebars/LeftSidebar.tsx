@@ -12,8 +12,8 @@ const LeftSidebar = () => {
 	const pathname = usePathname();
 	return (
 		<aside className="sidebar custom-scrollbar dark:custom-scrollbar-dark background-light900_dark200 fixed h-screen overflow-y-scroll  px-2 pt-36 shadow-md dark:border-r-2 dark:border-r-neutral-900 dark:shadow-none max-sm:hidden lg:px-6">
-			<ul className=" flex min-h-full flex-col justify-between pb-2 ">
-				<div className="flex shrink-0 grow flex-col ">
+			<ul className=" flex min-h-full flex-col justify-between gap-1 pb-2">
+				<div className="flex shrink-0 grow flex-col gap-1">
 					{sidebarLinks.map((item) => {
 						const isActive =
 							(pathname.includes(item.route) &&
