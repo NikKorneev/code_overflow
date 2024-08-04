@@ -44,3 +44,23 @@ export type Filter = {
 	name: string;
 	value: string;
 };
+
+export type Tag = {
+	id: string;
+	title: string;
+};
+
+export type Question = {
+	id: string;
+	title: string;
+	tags: Tag[];
+	author: {
+		id: string;
+		name: string;
+		picture: string;
+	};
+	upvotes: number;
+	views: number;
+	answers: Array<object>;
+	createdAt: Date;
+};

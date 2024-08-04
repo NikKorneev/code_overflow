@@ -6,7 +6,7 @@ type Props = {
 	title: string;
 	count?: number;
 	showCount?: boolean;
-	id: number;
+	id: string;
 };
 
 const RenderTag = ({ title, count, id, showCount }: Props) => {

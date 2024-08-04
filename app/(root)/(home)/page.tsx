@@ -1,11 +1,52 @@
 import Filters from "@/components/shared/Filters";
 import LocalSearch from "@/components/shared/search/LocalSearch";
-import HomeFilters from "@/components/home/homeFilters";
+import HomeFilters from "@/components/home/HomeFilters";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 import React from "react";
 import QuestionCard from "@/components/shared/QuestionCard";
+import NoResult from "@/components/shared/NoResult";
+import { Question } from "@/types";
+
+const questions: Question[] = [
+	{
+		id: "1",
+		title: "How do I use the Lightning Component?",
+		tags: [
+			{ id: "1", title: "python" },
+			{ id: "2", title: "databases" },
+			{ id: "3", title: "mongodb" },
+		],
+		author: {
+			name: "John Doe",
+			id: "1",
+			picture: "/assets/images/default-logo.svg",
+		},
+		upvotes: 500,
+		views: 20000,
+		answers: [{ obj: "hello" }],
+		createdAt: new Date("2024-07-16"),
+	},
+	{
+		id: "2",
+		title: "How to center a div",
+		tags: [
+			{ id: "1", title: "css" },
+			{ id: "2", title: "html" },
+			{ id: "3", title: "mongodb" },
+		],
+		author: {
+			name: "John Doe",
+			id: "2",
+			picture: "/assets/images/default-logo.svg",
+		},
+		upvotes: 500,
+		views: 1200,
+		answers: [{ obj: "hello" }],
+		createdAt: new Date("2022-01-01"),
+	},
+];
 
 const Home = () => {
 	return (
@@ -37,9 +78,20 @@ const Home = () => {
 			<HomeFilters />
 
 			<div className="mt-10 flex flex-col gap-6">
-				<QuestionCard />
-				<QuestionCard />
-				<QuestionCard />
+				{questions.length > 0 ? (
+					questions?.map((question) => (
+						<QuestionCard key={question.id} {...question} />
+					))
+				) : (
+					<NoResult
+						title={"There's no questions to show"}
+						description={
+							"Ask a question and kickstart the discussion!"
+						}
+						link="/ask-question"
+						btnText="Ask a Question"
+					/>
+				)}
 			</div>
 		</>
 	);
