@@ -1,74 +1,99 @@
-import { SignedOut, SignInButton, SignedIn, UserButton } from "@clerk/nextjs";
+import Filters from "@/components/shared/Filters";
+import LocalSearch from "@/components/shared/search/LocalSearch";
+import HomeFilters from "@/components/home/HomeFilters";
+import { Button } from "@/components/ui/button";
+import { HomePageFilters } from "@/constants/filters";
+import Link from "next/link";
 import React from "react";
+import QuestionCard from "@/components/shared/QuestionCard";
+import NoResult from "@/components/shared/NoResult";
+import { Question } from "@/types";
+
+const questions: Question[] = [
+	{
+		id: "1",
+		title: "How do I use the Lightning Component?",
+		tags: [
+			{ id: "1", title: "python" },
+			{ id: "2", title: "databases" },
+			{ id: "3", title: "mongodb" },
+		],
+		author: {
+			name: "John Doe",
+			id: "1",
+			picture: "/assets/images/default-logo.svg",
+		},
+		upvotes: 500,
+		views: 20000,
+		answers: [{ obj: "hello" }],
+		createdAt: new Date("2024-07-16"),
+	},
+	{
+		id: "2",
+		title: "How to center a div",
+		tags: [
+			{ id: "1", title: "css" },
+			{ id: "2", title: "html" },
+			{ id: "3", title: "mongodb" },
+		],
+		author: {
+			name: "John Doe",
+			id: "2",
+			picture: "/assets/images/default-logo.svg",
+		},
+		upvotes: 500,
+		views: 1200,
+		answers: [{ obj: "hello" }],
+		createdAt: new Date("2022-01-01"),
+	},
+];
 
 const Home = () => {
 	return (
-		<div>
-			<h1>HomePAGE</h1>
-			<p>
-				Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore
-				expedita cumque dicta nobis, fugit sapiente molestias quae sequi
-				nemo consequatur magni, omnis, alias nulla distinctio odio. Ea
-				quasi amet corrupti sint sit voluptatem laudantium earum animi
-				quis ipsum cum voluptatibus incidunt vitae, cupiditate
-				praesentium dolorem hic facilis tenetur eius illo nulla
-				obcaecati alias rem magni. Aliquam labore voluptas blanditiis,
-				totam exercitationem harum cum aliquid, dicta illo nisi tempora
-				veniam fugit esse aperiam atque modi qui explicabo ipsa
-				dignissimos dolore excepturi voluptates! Odio illo vitae eius
-				voluptatibus iure ducimus possimus aliquid magnam? At maiores
-				assumenda ab dolor sed ex ea, neque fuga, autem, odit
-				reiciendis? Accusantium, quasi necessitatibus. Tempora veniam
-				illum aliquam rerum rem optio magnam repudiandae eligendi.
-				Molestiae nisi explicabo ab quasi odit eius et fuga aspernatur
-				incidunt laudantium asperiores quas temporibus cupiditate
-				corporis, quo nulla aliquam sed omnis possimus cum perferendis
-				mollitia? Praesentium velit nobis soluta a quis neque voluptate
-				dolor vero quasi. Omnis natus ipsum vel, illum quia consequuntur
-				dolores, dolorum, labore molestiae laudantium neque eos debitis
-				aperiam at. Voluptatibus, dolore sint. Ipsam odio porro aut
-				suscipit quod consectetur cumque architecto officia laboriosam?
-				Aliquid hic inventore obcaecati officiis perferendis animi
-				corporis beatae dolor dignissimos sed exercitationem consectetur
-				ad ex voluptas neque impedit iure, quo saepe minus nulla velit
-				odio harum amet laborum? Veritatis minima dolor ea beatae
-				veniam, itaque architecto a laudantium voluptate repudiandae
-				explicabo? In officia, repellat doloribus, molestias qui velit
-				laboriosam minima veniam, quaerat ex consequatur. Dolorum sequi,
-				praesentium ullam commodi, numquam nisi id dolor debitis magni
-				magnam cumque neque dicta sint rem eveniet maxime corporis ad
-				accusamus optio in explicabo reprehenderit mollitia hic? Id,
-				reiciendis a fugit beatae commodi iusto dolorum laudantium
-				itaque recusandae, praesentium ut consequuntur voluptatum earum
-				voluptatem repellendus, repellat quibusdam deleniti
-				reprehenderit aut dolore sunt tempora eius ullam. Iure sed
-				cumque pariatur cupiditate in officiis dolore. Dicta eaque quos
-				voluptatibus dolores pariatur, aut maiores repellat rerum
-				architecto alias nisi ducimus ipsum consequatur modi assumenda
-				at unde iusto ex consectetur atque facere magni? Itaque amet,
-				nemo reprehenderit quod nesciunt modi? Illo reiciendis
-				consequatur atque dolores error maxime molestias ipsa dolorum
-				cupiditate veritatis sed aperiam voluptatibus exercitationem at
-				provident esse iusto, quidem sunt quas? Sunt cum facilis
-				voluptas quam, porro autem quas. Corporis sit consectetur
-				possimus quam iure molestias omnis est, nisi nesciunt aperiam
-				doloribus beatae! Est mollitia, porro sint cum doloremque
-				architecto dolores voluptatibus distinctio veniam quasi, animi
-				blanditiis nihil fugit beatae placeat deserunt. Quam iste porro
-				natus minus fugiat sequi ipsa, minima quo dignissimos aliquid
-				quis? Similique possimus dolor a autem saepe, ullam quisquam
-				eligendi fugit accusantium, molestiae ipsum enim. Sequi iure at
-				eum modi velit! Nobis repudiandae quasi, quisquam dolores ipsa
-				sapiente? Eaque incidunt quidem amet in aperiam aliquam corrupti
-				beatae, repellat minima voluptatem dolor numquam eius magnam
-				minus atque facere facilis officia est perferendis eos.
-				Distinctio nobis provident commodi facere corporis nemo beatae
-				architecto voluptatum eligendi consequuntur id labore,
-				temporibus sequi nisi hic a reiciendis. Tenetur, nisi, accusamus
-				unde iste eos reprehenderit laborum cupiditate sit numquam
-				dolores cum quaerat nesciunt?
-			</p>
-		</div>
+		<>
+			<div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
+				<h1 className="h1-bold text-dark100_light900">All Questions</h1>
+
+				<Link
+					href="/ask-question"
+					className="flex justify-end max-sm:w-full"
+				>
+					<Button className="primary-gradient min-h-[46px] px-4 py-3 !text-light-900">
+						Ask a Question
+					</Button>
+				</Link>
+			</div>
+			<div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center lg:flex-col">
+				<LocalSearch
+					route="/"
+					placeholder="Search questions..."
+					otherClasses="flex-1"
+				/>{" "}
+				<Filters
+					filters={HomePageFilters}
+					otherClasses="min-h-[56px] sm:min-w-[170px]"
+					containerClasses="hidden max-md:flex"
+				/>
+			</div>
+			<HomeFilters />
+
+			<div className="mt-10 flex flex-col gap-6">
+				{questions.length > 0 ? (
+					questions?.map((question) => (
+						<QuestionCard key={question.id} {...question} />
+					))
+				) : (
+					<NoResult
+						title={"There's no questions to show"}
+						description={
+							"Ask a question and kickstart the discussion!"
+						}
+						link="/ask-question"
+						btnText="Ask a Question"
+					/>
+				)}
+			</div>
+		</>
 	);
 };
 

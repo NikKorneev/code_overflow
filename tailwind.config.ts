@@ -6,7 +6,7 @@ const config: Config = {
 		"./components/**/*.{js,ts,jsx,tsx,mdx}",
 		"./app/**/*.{js,ts,jsx,tsx,mdx}",
 	],
-	darkMode: "class",
+	darkMode: "selector",
 	theme: {
 		container: {
 			center: true,
@@ -30,8 +30,8 @@ const config: Config = {
 				dark: {
 					100: "#000000",
 					200: "#0F1117",
-					300: "#7B8EC8",
-					400: "#212734",
+					300: "rgb(21,24,33)",
+					400: "rgb(33,39,52)",
 					500: "#151821",
 				},
 				light: {
