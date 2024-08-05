@@ -1,5 +1,5 @@
 "use client";
-
+import { Editor } from "@tinymce/tinymce-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,8 +15,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { questionsSchema } from "@/lib/validations";
+import { useEffect, useRef, useState } from "react";
+import { useTheme } from "@/context/ThemeProvider";
 
 const QuestionForm = () => {
+	const editorRef = useRef<null>(null);
+	const themeContext = useTheme();
+
 	const form = useForm<z.infer<typeof questionsSchema>>({
 		resolver: zodResolver(questionsSchema),
 		defaultValues: {
@@ -27,6 +32,8 @@ const QuestionForm = () => {
 	function onSubmit(values: z.infer<typeof questionsSchema>) {
 		console.log(values);
 	}
+	console.log(themeContext.mode);
+
 	return (
 		<Form {...form}>
 			<form
@@ -56,26 +63,128 @@ const QuestionForm = () => {
 						</FormItem>
 					)}
 				/>
-				<FormField
-					control={form.control}
-					name="explanation"
-					render={({ field }) => (
-						<FormItem className="flex w-full flex-col gap-3">
-							<FormLabel className="paragraph-semibold text-dark400_light800 ">
-								Detailed explanation of your problem
-								<span className="text-primary-500">*</span>
-							</FormLabel>
-							<FormControl className="mt-3.5">
-								{/* Add en editor component */}
-							</FormControl>
-							<FormDescription className="body-regular mt-2.5 text-light-500">
-								Introduce the problem and expand on what you put
-								in the title. Minimum 20 characters.
-							</FormDescription>
-							<FormMessage className="text-red-500" />
-						</FormItem>
-					)}
-				/>
+				{themeContext.mode === "dark" && (
+					<FormField
+						control={form.control}
+						name="explanation"
+						render={({ field }) => (
+							<FormItem className="flex w-full flex-col gap-3">
+								<FormLabel className="paragraph-semibold text-dark400_light800 ">
+									Detailed explanation of your problem
+									<span className="text-primary-500">*</span>
+								</FormLabel>
+								<FormControl className="mt-3.5">
+									<Editor
+										apiKey={
+											process.env
+												.NEXT_PUBLIC_TINY_EDITOR_API_KEY
+										}
+										onInit={(_evt, editor) => {
+											// @ts-ignore
+											editorRef.current = editor;
+										}}
+										initialValue=""
+										init={{
+											height: 350,
+											menubar: false,
+											content_css: `dark`, // Use TinyMCE's built-in dark theme
+											skin: "oxide-dark",
+											plugins: [
+												"advlist",
+												"autolink",
+												"lists",
+												"link",
+												"image",
+												"charmap",
+												"preview",
+												"anchor",
+												"searchreplace",
+												"visualblocks",
+												"fullscreen",
+												"insertdatetime",
+												"media",
+												"table",
+												"codesample",
+											],
+											toolbar:
+												"undo redo | blocks | " +
+												"codesample | bold italic forecolor | alignleft aligncenter " +
+												"alignright alignjustify | bullist ",
+											content_style:
+												"body { font-family:Inter,sans-serif; font-size:16px; }",
+										}}
+									/>
+								</FormControl>
+								<FormDescription className="body-regular mt-2.5 text-light-500">
+									Introduce the problem and expand on what you
+									put in the title. Minimum 20 characters.
+								</FormDescription>
+								<FormMessage className="text-red-500" />
+							</FormItem>
+						)}
+					/>
+				)}
+				{themeContext.mode !== "dark" && (
+					<FormField
+						control={form.control}
+						name="explanation"
+						render={({ field }) => (
+							<FormItem className="flex w-full flex-col gap-3">
+								<FormLabel className="paragraph-semibold text-dark400_light800 ">
+									Detailed explanation of your problem
+									<span className="text-primary-500">*</span>
+								</FormLabel>
+								<FormControl className="mt-3.5">
+									<Editor
+										apiKey={
+											process.env
+												.NEXT_PUBLIC_TINY_EDITOR_API_KEY
+										}
+										onInit={(_evt, editor) => {
+											// @ts-ignore
+											editorRef.current = editor;
+										}}
+										initialValue=""
+										init={{
+											height: 350,
+											menubar: false,
+											content_css: `light`, // Use TinyMCE's built-in dark theme
+											skin: "oxide",
+											plugins: [
+												"advlist",
+												"autolink",
+												"lists",
+												"link",
+												"image",
+												"charmap",
+												"preview",
+												"anchor",
+												"searchreplace",
+												"visualblocks",
+												"fullscreen",
+												"insertdatetime",
+												"media",
+												"table",
+												"codesample",
+											],
+											toolbar:
+												"undo redo | blocks | " +
+												"codesample | bold italic forecolor | alignleft aligncenter " +
+												"alignright alignjustify | bullist ",
+											content_style:
+												"body { font-family:Inter,sans-serif; font-size:16px; }",
+										}}
+									/>
+								</FormControl>
+								<FormDescription className="body-regular mt-2.5 text-light-500">
+									Introduce the problem and expand on what you
+									put in the title. Minimum 20 characters.
+								</FormDescription>
+								<FormMessage className="text-red-500" />
+							</FormItem>
+						)}
+					/>
+				)}
 				<FormField
 					control={form.control}
 					name="tags"
