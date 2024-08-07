@@ -60,6 +60,7 @@ export type Question = {
 		_id: string;
 		name: string;
 		picture: string;
+		username: string;
 	};
 	upvotes: number;
 	views: number;

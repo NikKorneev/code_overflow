@@ -127,6 +127,7 @@ const QuestionForm = ({ mongoUserId, type }: Props) => {
 							<FormControl className="mt-3.5">
 								<Input
 									{...field}
+									autoComplete="off"
 									className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
 								/>
 							</FormControl>
@@ -274,6 +275,7 @@ const QuestionForm = ({ mongoUserId, type }: Props) => {
 							</FormLabel>
 							<FormControl className="mt-3.5">
 								<Input
+									autoComplete="off"
 									onKeyDown={(e) =>
 										handleInputKeyDown(e, field)
 									}

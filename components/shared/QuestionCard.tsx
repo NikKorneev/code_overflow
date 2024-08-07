@@ -7,8 +7,6 @@ import { getTimestamp } from "@/lib/utils";
 import { title } from "process";
 
 const QuestionCard = (props: Question) => {
-	console.log(props.tags);
-
 	return (
 		<div className="card-wrapper">
 			<div className="md:hidden">
@@ -32,10 +30,13 @@ const QuestionCard = (props: Question) => {
 				<div className="flex  items-end gap-1">
 					<Metric
 						alt="author's image"
-						icon="/assets/images/default-logo.svg"
+						icon={
+							props.author.picture ||
+							"/assets/images/default-logo.svg"
+						}
 						title={getTimestamp(props.createdAt)}
 						value={`${props.author.name} •`}
-						href={`/profile/${props.author?._id}`}
+						href={`/profile/${props.author?.username}`}
 						isAuthor
 						textStyles="small-medium lg:text-base text-dark400_light800"
 					/>
