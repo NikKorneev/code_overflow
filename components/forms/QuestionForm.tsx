@@ -18,10 +18,9 @@ import { questionsSchema } from "@/lib/validations";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "@/context/ThemeProvider";
 import { Badge } from "../ui/badge";
-import Image from "next/image";
-import { type } from "os";
+import { createQuestion } from "@/lib/actions/question.action";
 
-const QuestionForm = () => {
+const QuestionForm = ({ type }: { type?: string }) => {
 	const editorRef = useRef<null>(null);
 	const themeContext = useTheme();
 
@@ -36,12 +35,13 @@ const QuestionForm = () => {
 
 	const { isSubmitting } = form.formState;
 
-	function onSubmit(values: z.infer<typeof questionsSchema>) {
+	async function onSubmit(values: z.infer<typeof questionsSchema>) {
 		console.log(values);
 		try {
 			//make an async to API -> create a question
 			//contain all form data
 			//navigate to home page
+			await createQuestion({});
 		} catch (error) {}
 	}
 
@@ -204,6 +204,10 @@ const QuestionForm = () => {
 											// @ts-ignore
 											editorRef.current = editor;
 										}}
+										onBlur={field.onBlur}
+										onEditorChange={(content) =>
+											field.onChange(content)
+										}
 										initialValue=""
 										init={{
 											height: 350,
