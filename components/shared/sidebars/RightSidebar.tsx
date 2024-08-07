@@ -45,37 +45,7 @@ const RightSidebar = () => {
 						title="javascript"
 						count={2000}
 						showCount
-						id={"1"}
-					/>
-					<RenderTag
-						title="javascript"
-						count={2000}
-						showCount
-						id={"2"}
-					/>
-					<RenderTag
-						title="javascript"
-						count={2000}
-						showCount
-						id={"3"}
-					/>
-					<RenderTag
-						title="javascript"
-						count={2000}
-						showCount
-						id={"4"}
-					/>
-					<RenderTag
-						title="javascript"
-						count={2000}
-						showCount
-						id={"5"}
-					/>
-					<RenderTag
-						title="javascript"
-						count={2000}
-						showCount
-						id={"6"}
+						_id={"1"}
 					/>
 				</div>
 			</div>
