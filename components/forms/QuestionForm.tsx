@@ -15,14 +15,22 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { questionsSchema } from "@/lib/validations";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { useTheme } from "@/context/ThemeProvider";
 import { Badge } from "../ui/badge";
 import { createQuestion } from "@/lib/actions/question.action";
+import { usePathname, useRouter } from "next/navigation";
 
-const QuestionForm = ({ type }: { type?: string }) => {
+interface Props {
+	mongoUserId: string;
+	type?: string;
+}
+
+const QuestionForm = ({ mongoUserId, type }: Props) => {
 	const editorRef = useRef<null>(null);
 	const themeContext = useTheme();
+	const router = useRouter();
+	const pathname = usePathname();
 
 	const form = useForm<z.infer<typeof questionsSchema>>({
 		resolver: zodResolver(questionsSchema),
@@ -36,12 +44,19 @@ const QuestionForm = ({ type }: { type?: string }) => {
 	const { isSubmitting } = form.formState;
 
 	async function onSubmit(values: z.infer<typeof questionsSchema>) {
-		console.log(values);
 		try {
 			//make an async to API -> create a question
 			//contain all form data
 			//navigate to home page
-			await createQuestion({});
+			await createQuestion({
+				title: values.title,
+				content: values.explanation,
+				tags: values.tags,
+				author: JSON.parse(mongoUserId),
+				path: pathname,
+			});
+
+			router.push("/");
 		} catch (error) {}
 	}
 

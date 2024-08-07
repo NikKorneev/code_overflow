@@ -8,47 +8,13 @@ import React from "react";
 import QuestionCard from "@/components/shared/QuestionCard";
 import NoResult from "@/components/shared/NoResult";
 import { Question } from "@/types";
+import { getQuestions } from "@/lib/actions/question.action";
 
-const questions: Question[] = [
-	{
-		id: "1",
-		title: "How do I use the Lightning Component?",
-		tags: [
-			{ id: "1", title: "python" },
-			{ id: "2", title: "databases" },
-			{ id: "3", title: "mongodb" },
-		],
-		author: {
-			name: "John Doe",
-			id: "1",
-			picture: "/assets/images/default-logo.svg",
-		},
-		upvotes: 500,
-		views: 20000,
-		answers: [{ obj: "hello" }],
-		createdAt: new Date("2024-07-16"),
-	},
-	{
-		id: "2",
-		title: "How to center a div",
-		tags: [
-			{ id: "1", title: "css" },
-			{ id: "2", title: "html" },
-			{ id: "3", title: "mongodb" },
-		],
-		author: {
-			name: "John Doe",
-			id: "2",
-			picture: "/assets/images/default-logo.svg",
-		},
-		upvotes: 500,
-		views: 1200,
-		answers: [{ obj: "hello" }],
-		createdAt: new Date("2022-01-01"),
-	},
-];
+const Home = async () => {
+	const result = (await getQuestions({})) as {
+		questions: Question[];
+	};
 
-const Home = () => {
 	return (
 		<>
 			<div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -78,9 +44,19 @@ const Home = () => {
 			<HomeFilters />
 
 			<div className="mt-10 flex flex-col gap-6">
-				{questions.length > 0 ? (
-					questions?.map((question) => (
-						<QuestionCard key={question.id} {...question} />
+				{result.questions?.length > 0 ? (
+					result.questions?.map((question) => (
+						<QuestionCard
+							key={question._id}
+							_id={question._id}
+							answers={question.answers}
+							author={question.author}
+							createdAt={question.createdAt}
+							tags={question.tags}
+							views={question.views}
+							title={question.title}
+							upvotes={question.upvotes}
+						/>
 					))
 				) : (
 					<NoResult
