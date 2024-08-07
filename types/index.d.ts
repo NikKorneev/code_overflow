@@ -46,16 +46,18 @@ export type Filter = {
 };
 
 export type Tag = {
-	id: string;
-	title: string;
+	_id: string;
+	name: string;
+	questions: Question[];
+	followers: User[];
 };
 
 export type Question = {
-	id: string;
+	_id: string;
 	title: string;
 	tags: Tag[];
 	author: {
-		id: string;
+		_id: string;
 		name: string;
 		picture: string;
 	};

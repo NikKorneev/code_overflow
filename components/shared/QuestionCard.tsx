@@ -1,12 +1,14 @@
 import React from "react";
 import RenderTag from "./RenderTag";
-import Image from "next/image";
 import { Question } from "@/types";
 import Link from "next/link";
 import Metric from "./Metric";
 import { getTimestamp } from "@/lib/utils";
+import { title } from "process";
 
 const QuestionCard = (props: Question) => {
+	console.log(props.tags);
+
 	return (
 		<div className="card-wrapper">
 			<div className="md:hidden">
@@ -14,7 +16,7 @@ const QuestionCard = (props: Question) => {
 					{getTimestamp(props.createdAt)}
 				</p>
 			</div>
-			<Link href={`/question/${props.id}`}>
+			<Link href={`/question/${props._id}`}>
 				<h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-4 md:line-clamp-2">
 					{props.title}
 				</h3>
@@ -22,7 +24,7 @@ const QuestionCard = (props: Question) => {
 
 			<div className="mt-3 flex flex-wrap gap-2">
 				{props.tags.map((tag) => (
-					<RenderTag title={tag.title} id={tag.id} key={tag.id} />
+					<RenderTag title={tag.name} _id={tag._id} key={tag._id} />
 				))}
 			</div>
 
@@ -33,7 +35,7 @@ const QuestionCard = (props: Question) => {
 						icon="/assets/images/default-logo.svg"
 						title={getTimestamp(props.createdAt)}
 						value={`${props.author.name} •`}
-						href={`/profile/${props.author.id}`}
+						href={`/profile/${props.author?._id}`}
 						isAuthor
 						textStyles="small-medium lg:text-base text-dark400_light800"
 					/>
@@ -43,21 +45,21 @@ const QuestionCard = (props: Question) => {
 					<Metric
 						title={"Votes"}
 						icon={"/assets/icons/like.svg"}
-						value={props.upvotes}
+						value={props.upvotes || 0}
 						alt="Votes icon"
 						textStyles="body-medium lg:text-base text-dark400_light700"
 					/>
 					<Metric
 						title={"Answers"}
 						icon={"/assets/icons/message.svg"}
-						value={props.answers.length}
+						value={props.answers.length || 0}
 						alt="Answers icon"
 						textStyles="small-medium lg:text-base text-dark400_light800"
 					/>
 					<Metric
 						title={"Views"}
 						icon={"/assets/icons/eye.svg"}
-						value={props.views}
+						value={props.views || 0}
 						alt="Views icon"
 						textStyles="small-medium lg:text-base text-dark400_light800"
 					/>
