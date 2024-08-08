@@ -57,6 +57,7 @@ export type Question = {
 	_id: string;
 	title: string;
 	tags: Tag[];
+	content: string;
 	author: {
 		_id: string;
 		name: string;

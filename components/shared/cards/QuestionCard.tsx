@@ -5,7 +5,7 @@ import { getTimestamp } from "@/lib/utils";
 import RenderTag from "../RenderTag";
 import Metric from "../Metric";
 
-const QuestionCard = (props: Question) => {
+const QuestionCard = (props: Omit<Question, "content">) => {
 	return (
 		<div className="card-wrapper">
 			<div className="md:hidden">
