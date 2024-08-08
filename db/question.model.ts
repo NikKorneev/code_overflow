@@ -14,12 +14,12 @@ export interface IQuestion extends Document {
 const QuestionSchema = new Schema<IQuestion>({
 	title: { type: String, required: true },
 	content: { type: String, required: true },
-	tags: [{ type: Schema.Types.ObjectId, ref: "Tag" }],
+	tags: [{ type: Schema.Types.ObjectId, ref: "Tag" }], //relation many->many
 	views: { type: Number, default: 0 },
-	upvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
-	downvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+	upvotes: [{ type: Schema.Types.ObjectId, ref: "User" }], //many->many
+	downvotes: [{ type: Schema.Types.ObjectId, ref: "User" }], //many->many
 	author: { type: Schema.Types.ObjectId, ref: "User" },
-	answers: [{ type: Schema.Types.ObjectId, ref: "Answer" }],
+	answers: [{ type: Schema.Types.ObjectId, ref: "Answer" }], //many->many
 	createdAt: { type: Date, default: Date.now },
 });
 

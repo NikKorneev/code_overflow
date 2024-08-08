@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 import React from "react";
-import QuestionCard from "@/components/shared/QuestionCard";
 import NoResult from "@/components/shared/NoResult";
 import { Question } from "@/types";
 import { getQuestions } from "@/lib/actions/question.action";
+import QuestionCard from "@/components/shared/cards/QuestionCard";
 
 const Home = async () => {
 	const result = (await getQuestions({})) as {

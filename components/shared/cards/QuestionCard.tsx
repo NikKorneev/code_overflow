@@ -1,10 +1,9 @@
 import React from "react";
-import RenderTag from "./RenderTag";
 import { Question } from "@/types";
 import Link from "next/link";
-import Metric from "./Metric";
 import { getTimestamp } from "@/lib/utils";
-import { title } from "process";
+import RenderTag from "../RenderTag";
+import Metric from "../Metric";
 
 const QuestionCard = (props: Question) => {
 	return (

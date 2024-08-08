@@ -50,6 +50,7 @@ export type Tag = {
 	name: string;
 	questions: Question[];
 	followers: User[];
+	description?: string;
 };
 
 export type Question = {

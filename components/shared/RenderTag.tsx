@@ -7,9 +7,25 @@ type Props = {
 	count?: number;
 	showCount?: boolean;
 	_id: string;
+	isLink?: boolean;
 };
 
-const RenderTag = ({ title, count, _id, showCount }: Props) => {
+const RenderTag = ({ title, count, _id, showCount, isLink = true }: Props) => {
+	if (!isLink) {
+		return (
+			<div>
+				<Badge className="subtle-medium background-light800_dark400  justify-between rounded-md  px-4  py-2 uppercase text-light-400 hover:bg-slate-900/80 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2  dark:border-slate-800 dark:text-[#7b8ec8]  dark:focus:ring-slate-300">
+					{title}
+				</Badge>
+				{showCount && (
+					<p className="text-dark500_light700 small-medium text-sm">
+						{count}+
+					</p>
+				)}
+			</div>
+		);
+	}
+
 	return (
 		<Link
 			href={`/tags/${_id}`}
