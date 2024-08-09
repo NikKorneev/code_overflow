@@ -139,132 +139,76 @@ const QuestionForm = ({ mongoUserId, type }: Props) => {
 						</FormItem>
 					)}
 				/>
-				{themeContext.mode === "dark" && (
-					<FormField
-						control={form.control}
-						name="explanation"
-						render={({ field }) => (
-							<FormItem className="flex w-full flex-col gap-3">
-								<FormLabel className="paragraph-semibold text-dark400_light800 ">
-									Detailed explanation of your problem
-									<span className="text-primary-500">*</span>
-								</FormLabel>
-								<FormControl className="mt-3.5">
-									<Editor
-										apiKey={
-											process.env
-												.NEXT_PUBLIC_TINY_EDITOR_API_KEY
-										}
-										onInit={(_evt, editor) => {
-											// @ts-ignore
-											editorRef.current = editor;
-										}}
-										initialValue=""
-										init={{
-											height: 350,
-											menubar: false,
-											content_css: `dark`, // Use TinyMCE's built-in dark theme
-											skin: "oxide-dark",
-											plugins: [
-												"advlist",
-												"autolink",
-												"lists",
-												"link",
-												"image",
-												"charmap",
-												"preview",
-												"anchor",
-												"searchreplace",
-												"visualblocks",
-												"fullscreen",
-												"insertdatetime",
-												"media",
-												"table",
-												"codesample",
-											],
-											toolbar:
-												"undo redo | blocks | " +
-												"codesample | bold italic forecolor | alignleft aligncenter " +
-												"alignright alignjustify | bullist ",
-											content_style:
-												"body { font-family:Inter,sans-serif; font-size:16px; }",
-										}}
-									/>
-								</FormControl>
-								<FormDescription className="body-regular mt-2.5 text-light-500">
-									Introduce the problem and expand on what you
-									put in the title. Minimum 20 characters.
-								</FormDescription>
-								<FormMessage className="text-red-500" />
-							</FormItem>
-						)}
-					/>
-				)}
-				{themeContext.mode !== "dark" && (
-					<FormField
-						control={form.control}
-						name="explanation"
-						render={({ field }) => (
-							<FormItem className="flex w-full flex-col gap-3">
-								<FormLabel className="paragraph-semibold text-dark400_light800 ">
-									Detailed explanation of your problem
-									<span className="text-primary-500">*</span>
-								</FormLabel>
-								<FormControl className="mt-3.5">
-									<Editor
-										apiKey={
-											process.env
-												.NEXT_PUBLIC_TINY_EDITOR_API_KEY
-										}
-										onInit={(_evt, editor) => {
-											// @ts-ignore
-											editorRef.current = editor;
-										}}
-										onBlur={field.onBlur}
-										onEditorChange={(content) =>
-											field.onChange(content)
-										}
-										initialValue=""
-										init={{
-											height: 350,
-											menubar: false,
-											content_css: `light`, // Use TinyMCE's built-in dark theme
-											skin: "oxide",
-											plugins: [
-												"advlist",
-												"autolink",
-												"lists",
-												"link",
-												"image",
-												"charmap",
-												"preview",
-												"anchor",
-												"searchreplace",
-												"visualblocks",
-												"fullscreen",
-												"insertdatetime",
-												"media",
-												"table",
-												"codesample",
-											],
-											toolbar:
-												"undo redo | blocks | " +
-												"codesample | bold italic forecolor | alignleft aligncenter " +
-												"alignright alignjustify | bullist ",
-											content_style:
-												"body { font-family:Inter,sans-serif; font-size:16px; }",
-										}}
-									/>
-								</FormControl>
-								<FormDescription className="body-regular mt-2.5 text-light-500">
-									Introduce the problem and expand on what you
-									put in the title. Minimum 20 characters.
-								</FormDescription>
-								<FormMessage className="text-red-500" />
-							</FormItem>
-						)}
-					/>
-				)}
+				<FormField
+					control={form.control}
+					name="explanation"
+					render={({ field }) => (
+						<FormItem className="flex w-full flex-col gap-3">
+							<FormLabel className="paragraph-semibold text-dark400_light800 ">
+								Detailed explanation of your problem
+								<span className="text-primary-500">*</span>
+							</FormLabel>
+							<FormControl className="mt-3.5">
+								<Editor
+									apiKey={
+										process.env
+											.NEXT_PUBLIC_TINY_EDITOR_API_KEY
+									}
+									onInit={(_evt, editor) => {
+										// @ts-ignore
+										editorRef.current = editor;
+									}}
+									initialValue=""
+									onEditorChange={(content) =>
+										field.onChange(content)
+									}
+									init={{
+										height: 350,
+										menubar: false,
+
+										content_css:
+											themeContext.mode === `dark`
+												? "dark"
+												: "light", // Use TinyMCE's built-in dark theme
+										skin:
+											themeContext.mode === `dark`
+												? "oxide-dark"
+												: "oxide",
+										plugins: [
+											"advlist",
+											"autolink",
+											"lists",
+											"link",
+											"image",
+											"charmap",
+											"preview",
+											"anchor",
+											"searchreplace",
+											"visualblocks",
+											"fullscreen",
+											"insertdatetime",
+											"media",
+											"table",
+											"codesample",
+										],
+										toolbar:
+											"undo redo | blocks | " +
+											"codesample | bold italic forecolor | alignleft aligncenter " +
+											"alignright alignjustify | bullist ",
+										content_style:
+											"body { font-family:Inter,sans-serif; font-size:16px; }",
+									}}
+								/>
+							</FormControl>
+							<FormDescription className="body-regular mt-2.5 text-light-500">
+								Introduce the problem and expand on what you put
+								in the title. Minimum 20 characters.
+							</FormDescription>
+							<FormMessage className="text-red-500" />
+						</FormItem>
+					)}
+				/>
+
 				<FormField
 					control={form.control}
 					name="tags"
