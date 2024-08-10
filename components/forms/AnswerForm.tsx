@@ -2,14 +2,12 @@
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
-	FormLabel,
 	FormMessage,
 } from "../ui/form";
-import { useForm } from "react-hook-form";
 import { AnswerSchema } from "@/lib/validations";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Editor } from "@tinymce/tinymce-react";
@@ -17,8 +15,17 @@ import { useTheme } from "@/context/ThemeProvider";
 import { useRef } from "react";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import { createAnswer } from "@/lib/actions/answer.action";
+import { usePathname } from "next/navigation";
 
-const AnswerForm = () => {
+type Props = {
+	question: string;
+	questionId: string;
+	authorId: string;
+};
+
+const AnswerForm = ({ question, questionId, authorId }: Props) => {
+	const pathname = usePathname();
 	const editorRef = useRef(null);
 	const themeContext = useTheme();
 	const form = useForm<z.infer<typeof AnswerSchema>>({
@@ -28,7 +35,24 @@ const AnswerForm = () => {
 		},
 	});
 
-	const handleCreateAnswer = (data) => {};
+	const handleCreateAnswer = async (data: z.infer<typeof AnswerSchema>) => {
+		try {
+			await createAnswer({
+				content: data.answer,
+				author: JSON.parse(authorId),
+				question: JSON.parse(questionId),
+				path: pathname,
+			});
+
+			form.reset();
+
+			if (editorRef.current) {
+				(editorRef.current as any).setContent("");
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	return (
 		<div>

@@ -69,3 +69,12 @@ export type Question = {
 	answers: Array<object>;
 	createdAt: Date;
 };
+
+export type IAnswer = {
+	question: string;
+	author: string;
+	content: string;
+	upvotes: any[];
+	downvotes: any[];
+	createdAt: Date;
+};
