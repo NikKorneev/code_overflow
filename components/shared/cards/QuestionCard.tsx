@@ -45,7 +45,7 @@ const QuestionCard = (props: Omit<Question, "content">) => {
 					<Metric
 						title={"Votes"}
 						icon={"/assets/icons/like.svg"}
-						value={props.upvotes || 0}
+						value={props.upvotes.length || 0}
 						alt="Votes icon"
 						textStyles="body-medium lg:text-base text-dark400_light700"
 					/>
@@ -59,7 +59,7 @@ const QuestionCard = (props: Omit<Question, "content">) => {
 					<Metric
 						title={"Views"}
 						icon={"/assets/icons/eye.svg"}
-						value={props.views || 0}
+						value={props.views.length || 0}
 						alt="Views icon"
 						textStyles="small-medium lg:text-base text-dark400_light800"
 					/>

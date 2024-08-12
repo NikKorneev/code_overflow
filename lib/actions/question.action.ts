@@ -7,10 +7,13 @@ import {
 	CreateQuestionParams,
 	GetQuestionByIdParams,
 	GetQuestionsParams,
+	QuestionVoteParams,
+	UpvoteDownvoteQuestion,
 } from "./shared.types";
 import User from "@/db/user.model";
 import { revalidatePath } from "next/cache";
 import { Question as QuestionType } from "@/types";
+import path from "path";
 
 export async function getQuestions(params: GetQuestionsParams) {
 	try {
@@ -86,6 +89,68 @@ export async function getQuestionById({ questionId }: GetQuestionByIdParams) {
 			})) as QuestionType;
 
 		return question;
+	} catch (error) {
+		throw error;
+	}
+}
+
+export async function upvoteQuestion({
+	userId,
+	hasupVoted,
+	path,
+	questionId,
+	hasdownVoted,
+}: QuestionVoteParams) {
+	try {
+		connectToDatabase();
+
+		if (hasupVoted) {
+			await Question.findByIdAndUpdate(questionId, {
+				$pull: { upvotes: userId },
+			});
+		} else if (hasdownVoted) {
+			await Question.findByIdAndUpdate(questionId, {
+				$push: { upvotes: userId },
+				$pull: { downvotes: userId },
+			});
+		} else {
+			await Question.findByIdAndUpdate(questionId, {
+				$addToSet: { upvotes: userId },
+			});
+		}
+
+		revalidatePath(path);
+	} catch (error) {
+		throw error;
+	}
+}
+
+export async function downvoteQuestion({
+	userId,
+	hasdownVoted,
+	path,
+	questionId,
+	hasupVoted,
+}: QuestionVoteParams) {
+	try {
+		connectToDatabase();
+
+		if (hasdownVoted) {
+			await Question.findByIdAndUpdate(questionId, {
+				$pull: { downvotes: userId },
+			});
+		} else if (hasupVoted) {
+			await Question.findByIdAndUpdate(questionId, {
+				$push: { downvotes: userId },
+				$pull: { upvotes: userId },
+			});
+		} else {
+			await Question.findByIdAndUpdate(questionId, {
+				$addToSet: { downvotes: userId },
+			});
+		}
+
+		revalidatePath(path);
 	} catch (error) {
 		throw error;
 	}

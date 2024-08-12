@@ -3,6 +3,7 @@ import AllAnswers from "@/components/shared/AllAnswers";
 import Metric from "@/components/shared/Metric";
 import ParseHTML from "@/components/shared/ParseHTML";
 import RenderTag from "@/components/shared/RenderTag";
+import Votes from "@/components/shared/Votes";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { getUserById } from "@/lib/actions/user.action";
 import { getTimestamp } from "@/lib/utils";
@@ -47,7 +48,22 @@ const Page = async ({ params }: Params) => {
 						</p>
 					</Link>
 
-					<div className="flex justify-end">VOTING</div>
+					<div className="flex justify-end">
+						<Votes
+							type="question"
+							targetId={JSON.stringify(question._id)}
+							userId={JSON.stringify(mongoUser?._id)}
+							upvotes={question.upvotes.length}
+							hasUpvoted={question.upvotes.includes(
+								mongoUser?._id
+							)}
+							downvotes={question.downvotes.length}
+							hasDownvoted={question.downvotes.includes(
+								mongoUser?._id
+							)}
+							hasSaved={mongoUser?.saved.includes(question._id)}
+						/>
+					</div>
 				</div>
 				<h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
 					{question.title}
@@ -72,7 +88,7 @@ const Page = async ({ params }: Params) => {
 				<Metric
 					title={"Views"}
 					icon={"/assets/icons/eye.svg"}
-					value={question.views || 0}
+					value={question.views.length || 0}
 					alt="Views icon"
 					textStyles="small-medium lg:text-base text-dark400_light800"
 				/>
@@ -94,12 +110,12 @@ const Page = async ({ params }: Params) => {
 			<AllAnswers
 				questionId={question._id}
 				totalAnswers={question.answers.length}
-				userId={mongoUser._id}
+				userId={JSON.stringify(mongoUser?._id)}
 			/>
 
 			<AnswerForm
-				questionId={question?._id}
-				authorId={mongoUser?._id}
+				questionId={JSON.stringify(question._id)}
+				authorId={JSON.stringify(mongoUser?._id)}
 				question={question?.content}
 			/>
 		</>

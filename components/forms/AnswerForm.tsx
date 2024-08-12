@@ -16,7 +16,7 @@ import { useRef } from "react";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { createAnswer } from "@/lib/actions/answer.action";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 type Props = {
 	question: string;
@@ -28,6 +28,7 @@ const AnswerForm = ({ question, questionId, authorId }: Props) => {
 	const pathname = usePathname();
 	const editorRef = useRef(null);
 	const themeContext = useTheme();
+	const router = useRouter();
 	const form = useForm<z.infer<typeof AnswerSchema>>({
 		resolver: zodResolver(AnswerSchema),
 		defaultValues: {
@@ -36,6 +37,8 @@ const AnswerForm = ({ question, questionId, authorId }: Props) => {
 	});
 
 	const handleCreateAnswer = async (data: z.infer<typeof AnswerSchema>) => {
+		if (!authorId) router.push("/sign-in");
+
 		try {
 			await createAnswer({
 				content: data.answer,

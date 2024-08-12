@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTimestamp } from "@/lib/utils";
 import ParseHTML from "./ParseHTML";
+import Votes from "./Votes";
 
 type Props = {
 	questionId: string;
@@ -24,7 +25,9 @@ const AllAnswers = async ({
 	return (
 		<div className="mt-11">
 			<div className="mb-4 flex items-center justify-between">
-				<h3 className="text-primary-500">{totalAnswers} Answers</h3>
+				<h3 className="text-primary-500">
+					{totalAnswers} Answer{totalAnswers !== 1 ? "s" : ""}
+				</h3>
 				<Filters filters={AnswerFilters} />
 			</div>
 			<div className="mb-6">
@@ -35,7 +38,7 @@ const AllAnswers = async ({
 							className="light-border card-wrapper border-b py-10"
 						>
 							<div className="flex items-center justify-between">
-								<div className="mb-4 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
+								<div className="mb-4 flex w-full flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
 									<Link
 										href={`/profile/${answer.author.username}`}
 										className="flex flex-1 items-start gap-1 sm:items-center"
@@ -64,8 +67,22 @@ const AllAnswers = async ({
 											</p>
 										</div>
 									</Link>
-									<div className="flex justify-end">
-										VOTING
+									<div className="">
+										<Votes
+											downvotes={answer.downvotes.length}
+											upvotes={answer.upvotes.length}
+											hasDownvoted={answer.downvotes.includes(
+												JSON.parse(userId)
+											)}
+											hasUpvoted={answer.upvotes.includes(
+												JSON.parse(userId)
+											)}
+											targetId={JSON.stringify(
+												answer._id
+											)}
+											type="answer"
+											userId={userId}
+										/>
 									</div>
 								</div>
 							</div>
