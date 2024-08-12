@@ -12,7 +12,7 @@ type Props = {
 
 const NoResult = ({ title, description, link, btnText }: Props) => {
 	return (
-		<div className="mt-10 flex w-full flex-col items-center justify-center">
+		<div className="mt-6 flex w-full flex-col items-center justify-center">
 			<Image
 				src="/assets/images/light-illustration.png"
 				alt="No result found illustration"

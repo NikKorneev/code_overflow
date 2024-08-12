@@ -7,15 +7,22 @@ import {
 	CreateQuestionParams,
 	GetQuestionByIdParams,
 	GetQuestionsParams,
+	GetSavedQuestionsParams,
 	QuestionVoteParams,
-	UpvoteDownvoteQuestion,
 } from "./shared.types";
 import User from "@/db/user.model";
 import { revalidatePath } from "next/cache";
 import { Question as QuestionType } from "@/types";
-import path from "path";
+import { FilterQuery } from "mongoose";
 
-export async function getQuestions(params: GetQuestionsParams) {
+export async function getQuestions({
+	filter,
+	page,
+	pageSize,
+	searchQuery,
+	saved,
+	userId,
+}: GetQuestionsParams) {
 	try {
 		connectToDatabase();
 
@@ -151,6 +158,47 @@ export async function downvoteQuestion({
 		}
 
 		revalidatePath(path);
+	} catch (error) {
+		throw error;
+	}
+}
+
+export async function getSavedQuestions({
+	clerkId,
+	filter,
+	page,
+	pageSize,
+	searchQuery,
+}: GetSavedQuestionsParams) {
+	try {
+		connectToDatabase();
+
+		const query: FilterQuery<typeof Question> = searchQuery
+			? { title: { $regex: new RegExp(searchQuery, "i") } }
+			: {};
+
+		const res = await User.findOne({ clerkId }).populate({
+			path: "saved",
+			model: Question,
+			match: query,
+			options: {
+				sort: { createdAt: -1 },
+			},
+			populate: [
+				{ path: "tags", model: Tag, select: "_id name" },
+				{
+					path: "author",
+					model: User,
+					select: "_id clerkId name picture",
+				},
+			],
+		});
+
+		if (!res) {
+			throw new Error("no user found");
+		}
+
+		return { questions: res.saved as QuestionType[] };
 	} catch (error) {
 		throw error;
 	}

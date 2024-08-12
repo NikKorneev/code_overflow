@@ -4,6 +4,7 @@ import {
 	downvoteQuestion,
 	upvoteQuestion,
 } from "@/lib/actions/question.action";
+import { saveQuestion } from "@/lib/actions/user.action";
 import { getCountToString } from "@/lib/utils";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -71,7 +72,16 @@ const Votes = ({
 		setIsSubmitting(false);
 	};
 
-	const handleSave = async () => {};
+	const handleSave = async () => {
+		setIsSubmitting(true);
+		await saveQuestion({
+			hasSaved: hasSaved!,
+			path: `/question/${targetId}`,
+			questionId: JSON.parse(targetId),
+			userId: JSON.parse(userId),
+		});
+		setIsSubmitting(false);
+	};
 
 	return (
 		<div className="flex gap-5">
@@ -123,20 +133,23 @@ const Votes = ({
 					</div>
 				</div>
 			</div>
-			<Image
-				src={
-					hasSaved
-						? "/assets/icons/star-filled.svg"
-						: "/assets/icons/star-red.svg"
-				}
-				alt="favorite"
-				className="cursor-pointer"
-				width={18}
-				height={18}
-				onClick={() => {
-					if (isSubmitting) return;
-				}}
-			/>
+			{type === "question" && (
+				<Image
+					src={
+						hasSaved
+							? "/assets/icons/star-filled.svg"
+							: "/assets/icons/star-red.svg"
+					}
+					alt="favorite"
+					className="cursor-pointer"
+					width={18}
+					height={18}
+					onClick={() => {
+						if (isSubmitting) return;
+						handleSave();
+					}}
+				/>
+			)}
 		</div>
 	);
 };
