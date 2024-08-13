@@ -6,6 +6,7 @@ import {
 	CreateUserParams,
 	DeleteUserParams,
 	GetAllUsersParams,
+	ToggleSaveQuestionParams,
 	UpdateUserParams,
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
@@ -17,7 +18,7 @@ type Params = {
 
 export async function getUserById(params: Params) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 
 		const { userId } = params;
 		const user = await User.findOne({ clerkId: userId });
@@ -30,7 +31,7 @@ export async function getUserById(params: Params) {
 
 export async function createUserByClerkId(userData: CreateUserParams) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 
 		const newUser = await User.create(userData);
 
@@ -58,7 +59,7 @@ export async function updateUser(params: UpdateUserParams) {
 
 export async function deleteUser(params: DeleteUserParams) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 
 		const { clerkId } = params;
 
@@ -84,12 +85,41 @@ export async function deleteUser(params: DeleteUserParams) {
 
 export async function getUsers(params: GetAllUsersParams) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 		// const { page = 1, pageSize = 20, filter, searchQuery } = params;
 
 		const users = await User.find({}).sort({ createdAt: -1 });
 
 		return { users };
+	} catch (error) {
+		throw error;
+	}
+}
+
+export async function saveQuestion({
+	path,
+	questionId,
+	userId,
+	hasSaved,
+}: ToggleSaveQuestionParams) {
+	try {
+		await connectToDatabase();
+
+		if (hasSaved) {
+			await User.findByIdAndUpdate(userId, {
+				$pull: {
+					saved: questionId,
+				},
+			});
+		} else {
+			await User.findByIdAndUpdate(userId, {
+				$addToSet: {
+					saved: questionId,
+				},
+			});
+		}
+
+		revalidatePath(path);
 	} catch (error) {
 		throw error;
 	}

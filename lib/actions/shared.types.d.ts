@@ -48,6 +48,8 @@ export interface GetQuestionsParams {
 	pageSize?: number;
 	searchQuery?: string;
 	filter?: string;
+	saved?: boolean;
+	userId?: string;
 }
 export interface CreateQuestionParams {
 	title: string;
@@ -118,6 +120,7 @@ export interface ToggleSaveQuestionParams {
 	userId: string;
 	questionId: string;
 	path: string;
+	hasSaved: boolean;
 }
 export interface GetSavedQuestionsParams {
 	clerkId: string;
@@ -133,4 +136,9 @@ export interface GetUserStatsParams {
 }
 export interface DeleteUserParams {
 	clerkId: string;
+}
+
+export interface UpvoteDownvoteQuestion {
+	userId: string;
+	targetId: string;
 }

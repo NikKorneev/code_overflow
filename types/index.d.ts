@@ -57,14 +57,25 @@ export type Question = {
 	_id: string;
 	title: string;
 	tags: Tag[];
+	content: string;
 	author: {
 		_id: string;
 		name: string;
 		picture: string;
 		username: string;
 	};
-	upvotes: number;
+	upvotes: Record<string, string>[];
+	downvotes: Record<string, string>[];
 	views: number;
 	answers: Array<object>;
+	createdAt: Date;
+};
+
+export type IAnswer = {
+	question: string;
+	author: string;
+	content: string;
+	upvotes: any[];
+	downvotes: any[];
 	createdAt: Date;
 };

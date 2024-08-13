@@ -5,7 +5,7 @@ import { getTimestamp } from "@/lib/utils";
 import RenderTag from "../RenderTag";
 import Metric from "../Metric";
 
-const QuestionCard = (props: Question) => {
+const QuestionCard = (props: Omit<Question, "content" | "downvotes">) => {
 	return (
 		<div className="card-wrapper">
 			<div className="md:hidden">
@@ -45,7 +45,7 @@ const QuestionCard = (props: Question) => {
 					<Metric
 						title={"Votes"}
 						icon={"/assets/icons/like.svg"}
-						value={props.upvotes || 0}
+						value={props.upvotes.length || 0}
 						alt="Votes icon"
 						textStyles="body-medium lg:text-base text-dark400_light700"
 					/>
