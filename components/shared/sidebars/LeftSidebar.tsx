@@ -1,14 +1,15 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { sidebarLinks } from "@/constants";
-import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { SignedIn, SignedOut, SignOutButton } from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
+import { SignedIn, SignOutButton, useClerk } from "@clerk/nextjs";
 import SidebarLink from "./SidebarLink";
 
-const LeftSidebar = () => {
+type Props = {
+	curUsername?: string;
+};
+const LeftSidebar = ({ curUsername }: Props) => {
 	const pathname = usePathname();
 	return (
 		<aside className="sidebar custom-scrollbar dark:custom-scrollbar-dark background-light900_dark200 fixed h-screen overflow-y-scroll  px-2 pt-36 shadow-md max-sm:hidden lg:px-6 dark:border-r-2 dark:border-r-neutral-900 dark:shadow-none">
@@ -20,7 +21,8 @@ const LeftSidebar = () => {
 								item.route.length > 1) ||
 							pathname === item.route;
 
-						if (item.route === "/profile") {
+						if (item.route.includes("/profile")) {
+							item.route = `/profile/${curUsername}`;
 							return (
 								<li key={item.route}>
 									<SignedIn>
@@ -42,7 +44,10 @@ const LeftSidebar = () => {
 				</div>
 				<SignedIn>
 					<li>
-						<SignOutButton>
+						<SignOutButton
+							signOutOptions={{ redirectUrl: "/" }}
+							redirectUrl="/"
+						>
 							<div className="base-medium text-dark300_light900 flex cursor-pointer items-center justify-start gap-4 bg-transparent p-4">
 								<Image
 									src="/assets/icons/logout.svg"

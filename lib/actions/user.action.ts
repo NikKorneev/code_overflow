@@ -6,11 +6,14 @@ import {
 	CreateUserParams,
 	DeleteUserParams,
 	GetAllUsersParams,
+	GetUserInfo,
 	ToggleSaveQuestionParams,
 	UpdateUserParams,
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
 import Question from "@/db/question.model";
+import { redirect } from "next/navigation";
+import Answer from "@/db/answer.model";
 
 type Params = {
 	userId: string;
@@ -121,6 +124,28 @@ export async function saveQuestion({
 
 		revalidatePath(path);
 	} catch (error) {
-		throw error;
+		redirect("/not-found");
+	}
+}
+
+export async function getUserProfile(params: GetUserInfo) {
+	try {
+		await connectToDatabase();
+
+		const res = await User.findOne({ username: params.username });
+
+		if (!res) throw new Error();
+
+		const totalQuestions = await Question.countDocuments({
+			author: res._id,
+		});
+
+		const totalAnswers = await Answer.countDocuments({
+			author: res._id,
+		});
+
+		return { user: res, totalAnswers, totalQuestions };
+	} catch (error) {
+		redirect("/not-found");
 	}
 }

@@ -97,6 +97,6 @@ export async function getQuestionsByTagId({
 		};
 	} catch (error) {
 		console.log(error);
-		redirect("/");
+		redirect("/not-found");
 	}
 }
