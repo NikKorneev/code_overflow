@@ -66,7 +66,7 @@ export type Question = {
 	};
 	upvotes: Record<string, string>[];
 	downvotes: Record<string, string>[];
-	views: Record<string, string>[];
+	views: number;
 	answers: Array<object>;
 	createdAt: Date;
 };

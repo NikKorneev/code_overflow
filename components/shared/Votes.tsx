@@ -1,5 +1,6 @@
 "use client";
 import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
+import { viewQuestion } from "@/lib/actions/interaction.action";
 import {
 	downvoteQuestion,
 	upvoteQuestion,
@@ -8,7 +9,7 @@ import { saveQuestion } from "@/lib/actions/user.action";
 import { getCountToString } from "@/lib/utils";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type VotesProps = {
 	type: "question" | "answer";
@@ -33,7 +34,10 @@ const Votes = ({
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const router = useRouter();
 	const handleVote = async (voteType: "upvote" | "downvote") => {
-		if (!userId) router.push("/sign-in");
+		if (!userId) {
+			router.push("/sign-in");
+			return;
+		}
 
 		setIsSubmitting(true);
 		if (voteType === "upvote" && type === "question") {
@@ -73,6 +77,11 @@ const Votes = ({
 	};
 
 	const handleSave = async () => {
+		if (!userId) {
+			router.push("/sign-in");
+			return;
+		}
+
 		setIsSubmitting(true);
 		await saveQuestion({
 			hasSaved: hasSaved!,
@@ -82,6 +91,25 @@ const Votes = ({
 		});
 		setIsSubmitting(false);
 	};
+
+	useEffect(() => {
+		let timer: NodeJS.Timeout;
+
+		if (type === "question") {
+			clearTimeout(timer!);
+
+			timer = setTimeout(() => {
+				viewQuestion({
+					questionId: JSON.parse(targetId),
+					userId: userId ? JSON.parse(userId) : undefined,
+				});
+			}, 5000);
+		}
+
+		return () => {
+			clearTimeout(timer);
+		};
+	}, [userId, targetId]);
 
 	return (
 		<div className="flex gap-5">

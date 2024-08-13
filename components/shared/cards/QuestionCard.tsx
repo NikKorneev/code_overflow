@@ -59,7 +59,7 @@ const QuestionCard = (props: Omit<Question, "content" | "downvotes">) => {
 					<Metric
 						title={"Views"}
 						icon={"/assets/icons/eye.svg"}
-						value={props.views.length || 0}
+						value={props.views || 0}
 						alt="Views icon"
 						textStyles="small-medium lg:text-base text-dark400_light800"
 					/>

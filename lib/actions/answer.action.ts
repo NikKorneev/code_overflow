@@ -19,7 +19,7 @@ export async function createAnswer({
 	question,
 }: CreateAnswerParams) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 
 		const answer = await Answer.create({
 			author,
@@ -44,7 +44,7 @@ export async function getAnswers({
 	sortBy,
 }: GetAnswersParams) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 
 		const results = await Answer.find({
 			question: questionId,
@@ -70,7 +70,7 @@ export async function upvoteAnswer({
 	hasupVoted,
 }: AnswerVoteParams) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 
 		if (hasupVoted) {
 			await Answer.findByIdAndUpdate(answerId, {
@@ -101,7 +101,7 @@ export async function downvoteAnswer({
 	userId,
 }: AnswerVoteParams) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 
 		if (hasdownVoted) {
 			await Answer.findByIdAndUpdate(answerId, {

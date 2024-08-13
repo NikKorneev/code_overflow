@@ -88,7 +88,7 @@ const Page = async ({ params }: Params) => {
 				<Metric
 					title={"Views"}
 					icon={"/assets/icons/eye.svg"}
-					value={question.views.length || 0}
+					value={question.views || 0}
 					alt="Views icon"
 					textStyles="small-medium lg:text-base text-dark400_light800"
 				/>

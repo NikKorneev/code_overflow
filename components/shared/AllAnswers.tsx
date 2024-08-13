@@ -71,12 +71,20 @@ const AllAnswers = async ({
 										<Votes
 											downvotes={answer.downvotes.length}
 											upvotes={answer.upvotes.length}
-											hasDownvoted={answer.downvotes.includes(
-												JSON.parse(userId)
-											)}
-											hasUpvoted={answer.upvotes.includes(
-												JSON.parse(userId)
-											)}
+											hasDownvoted={
+												userId
+													? answer.downvotes.includes(
+															JSON.parse(userId)
+													  )
+													: false
+											}
+											hasUpvoted={
+												userId
+													? answer.upvotes.includes(
+															JSON.parse(userId)
+													  )
+													: false
+											}
 											targetId={JSON.stringify(
 												answer._id
 											)}

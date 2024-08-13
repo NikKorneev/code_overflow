@@ -14,6 +14,7 @@ import User from "@/db/user.model";
 import { revalidatePath } from "next/cache";
 import { Question as QuestionType } from "@/types";
 import { FilterQuery } from "mongoose";
+import { redirect } from "next/navigation";
 
 export async function getQuestions({
 	filter,
@@ -24,7 +25,7 @@ export async function getQuestions({
 	userId,
 }: GetQuestionsParams) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 
 		const result = await Question.find({})
 			.populate({
@@ -47,7 +48,7 @@ export async function getQuestions({
 
 export async function createQuestion(params: CreateQuestionParams) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 		const { title, content, tags, author, path } = params;
 
 		const question = await Question.create({
@@ -81,7 +82,7 @@ export async function createQuestion(params: CreateQuestionParams) {
 
 export async function getQuestionById({ questionId }: GetQuestionByIdParams) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 
 		const question = (await Question.findById(questionId)
 			.populate({
@@ -97,6 +98,7 @@ export async function getQuestionById({ questionId }: GetQuestionByIdParams) {
 
 		return question;
 	} catch (error) {
+		redirect("/");
 		throw error;
 	}
 }
@@ -109,7 +111,7 @@ export async function upvoteQuestion({
 	hasdownVoted,
 }: QuestionVoteParams) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 
 		if (hasupVoted) {
 			await Question.findByIdAndUpdate(questionId, {
@@ -140,7 +142,7 @@ export async function downvoteQuestion({
 	hasupVoted,
 }: QuestionVoteParams) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 
 		if (hasdownVoted) {
 			await Question.findByIdAndUpdate(questionId, {
@@ -171,7 +173,7 @@ export async function getSavedQuestions({
 	searchQuery,
 }: GetSavedQuestionsParams) {
 	try {
-		connectToDatabase();
+		await connectToDatabase();
 
 		const query: FilterQuery<typeof Question> = searchQuery
 			? { title: { $regex: new RegExp(searchQuery, "i") } }
