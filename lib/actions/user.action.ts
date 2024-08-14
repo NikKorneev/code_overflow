@@ -7,6 +7,7 @@ import {
 	DeleteUserParams,
 	GetAllUsersParams,
 	GetUserInfo,
+	GetUserStatsParams,
 	ToggleSaveQuestionParams,
 	UpdateUserParams,
 } from "./shared.types";
@@ -35,8 +36,11 @@ export async function getUserById(params: Params) {
 export async function createUserByClerkId(userData: CreateUserParams) {
 	try {
 		await connectToDatabase();
+		console.log("userData", userData);
 
 		const newUser = await User.create(userData);
+
+		console.log("newUser", newUser);
 
 		return newUser;
 	} catch (error) {
@@ -147,5 +151,45 @@ export async function getUserProfile(params: GetUserInfo) {
 		return { user: res, totalAnswers, totalQuestions };
 	} catch (error) {
 		redirect("/not-found");
+	}
+}
+
+export async function getUserQuestions({
+	userId,
+	page,
+	pageSize,
+}: GetUserStatsParams) {
+	try {
+		await connectToDatabase();
+
+		const questions = await Question.find({ author: userId })
+			.sort({
+				views: -1,
+				upvotes: -1,
+			})
+			.populate("tags", "_id name")
+			.populate("author", "_id clerkId name picture");
+
+		return { questions: questions || [] };
+	} catch (error) {
+		throw error;
+	}
+}
+
+export async function getUserAnswers({
+	userId,
+	page,
+	pageSize,
+}: GetUserStatsParams) {
+	try {
+		connectToDatabase();
+		const answers = await Answer.find({ author: userId })
+			.populate("question", "_id title")
+			.sort({ upvotes: -1 });
+
+		return { answers: answers || [] };
+	} catch (error) {
+		alert("Something went very wrong. Please try again later.");
+		throw error;
 	}
 }

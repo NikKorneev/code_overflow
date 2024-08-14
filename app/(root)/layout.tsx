@@ -9,7 +9,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 	let mongoUsername;
 
 	if (userId) {
-		mongoUsername = (await getUserById({ userId })).username;
+		mongoUsername = (await getUserById({ userId }))?.username;
 	}
 
 	return (

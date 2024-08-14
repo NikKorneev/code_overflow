@@ -88,7 +88,7 @@ export async function getQuestionById({ questionId }: GetQuestionByIdParams) {
 			.populate({
 				path: "author",
 				model: User,
-				select: "_id clerkId name picture",
+				select: "_id clerkId name picture username",
 			})
 			.populate({
 				path: "tags",

@@ -1,4 +1,3 @@
-import React from "react";
 import { Question } from "@/types";
 import Link from "next/link";
 import { getTimestamp } from "@/lib/utils";
