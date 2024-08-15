@@ -4,9 +4,10 @@ import QuestionCard from "./cards/QuestionCard";
 type Props = {
 	userId: string;
 	searchParams?: Record<string, string | undefined>;
+	clerkId: string;
 };
 
-const QuestionTab = async ({ userId, searchParams }: Props) => {
+const QuestionTab = async ({ userId, searchParams, clerkId }: Props) => {
 	const { questions } = await getUserQuestions({ userId, page: 1 });
 
 	return (
@@ -21,6 +22,7 @@ const QuestionTab = async ({ userId, searchParams }: Props) => {
 						createdAt={question.createdAt}
 						tags={question.tags}
 						title={question.title}
+						clerkId={clerkId}
 						upvotes={question.upvotes}
 						views={question.views}
 					/>

@@ -3,8 +3,17 @@ import Link from "next/link";
 import { getTimestamp } from "@/lib/utils";
 import RenderTag from "../RenderTag";
 import Metric from "../Metric";
+import { SignedIn } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
+import EditDeleteAction from "../EditDeleteAction";
 
-const QuestionCard = (props: Omit<Question, "content" | "downvotes">) => {
+const QuestionCard = (
+	props: Omit<Question, "content" | "downvotes"> & { clerkId?: string }
+) => {
+	const { userId } = auth();
+
+	const showActionButtons = userId && userId === props.clerkId;
+
 	return (
 		<div className="card-wrapper">
 			<div className="md:hidden">
@@ -12,11 +21,22 @@ const QuestionCard = (props: Omit<Question, "content" | "downvotes">) => {
 					{getTimestamp(props.createdAt)}
 				</p>
 			</div>
-			<Link href={`/question/${props._id}`}>
-				<h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-4 md:line-clamp-2">
-					{props.title}
-				</h3>
-			</Link>
+			<div className="flex flex-row justify-between">
+				<Link href={`/question/${props._id}`} className="grow">
+					<h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-4 md:line-clamp-2">
+						{props.title}
+					</h3>
+				</Link>
+
+				<SignedIn>
+					{showActionButtons && (
+						<EditDeleteAction
+							type="Question"
+							itemId={JSON.stringify(props._id)}
+						/>
+					)}
+				</SignedIn>
+			</div>
 
 			<div className="mt-3 flex flex-wrap gap-2">
 				{props.tags.map((tag) => (

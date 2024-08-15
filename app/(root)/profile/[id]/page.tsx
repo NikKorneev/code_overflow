@@ -96,12 +96,14 @@ const Page = async ({ params, searchParams }: URLProps) => {
 					</TabsList>
 					<TabsContent value="top-posts">
 						<QuestionTab
+							clerkId={user.clerkId}
 							userId={user._id}
 							searchParams={searchParams}
 						/>
 					</TabsContent>
 					<TabsContent value="answers">
 						<AnswerTab
+							clerkId={user.clerkId}
 							userId={user._id}
 							searchParams={searchParams}
 						/>

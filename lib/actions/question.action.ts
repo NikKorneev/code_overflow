@@ -5,6 +5,7 @@ import { connectToDatabase } from "../mongoose";
 import Tag from "@/db/tag.model";
 import {
 	CreateQuestionParams,
+	DeleteQuestionParams,
 	GetQuestionByIdParams,
 	GetQuestionsParams,
 	GetSavedQuestionsParams,
@@ -15,6 +16,8 @@ import { revalidatePath } from "next/cache";
 import { Question as QuestionType } from "@/types";
 import { FilterQuery } from "mongoose";
 import { redirect } from "next/navigation";
+import Answer from "@/db/answer.model";
+import Interaction from "@/db/interaction.model";
 
 export async function getQuestions({
 	filter,
@@ -201,6 +204,33 @@ export async function getSavedQuestions({
 		}
 
 		return { questions: res.saved as QuestionType[] };
+	} catch (error) {
+		throw error;
+	}
+}
+
+export async function deleteQuestion({
+	questionId,
+	path,
+}: DeleteQuestionParams) {
+	try {
+		connectToDatabase();
+
+		await Question.findByIdAndDelete(questionId);
+		await Answer.deleteMany({ question: questionId });
+		await Interaction.deleteMany({ question: questionId });
+
+		await User.updateMany(
+			{ saved: questionId },
+			{ $pull: { saved: questionId } }
+		);
+
+		await Tag.updateMany(
+			{ questions: questionId },
+			{ $pull: { questions: questionId } }
+		);
+
+		revalidatePath(path);
 	} catch (error) {
 		throw error;
 	}
