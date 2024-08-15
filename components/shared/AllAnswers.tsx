@@ -6,6 +6,9 @@ import Link from "next/link";
 import { getTimestamp } from "@/lib/utils";
 import ParseHTML from "./ParseHTML";
 import Votes from "./Votes";
+import { SignedIn } from "@clerk/nextjs";
+import EditDeleteAction from "./EditDeleteAction";
+import { auth } from "@clerk/nextjs/server";
 
 type Props = {
 	questionId: string;
@@ -13,15 +16,20 @@ type Props = {
 	userId: string;
 	page?: number;
 	filter?: string;
+	questionClerkId?: string;
 };
 const AllAnswers = async ({
 	questionId,
 	totalAnswers,
 	userId,
 	filter,
+	questionClerkId,
 	page = 1,
 }: Props) => {
+	const { userId: curClerkId } = auth();
 	const { results } = await getAnswers({ questionId });
+	const showActionButtons = questionClerkId === curClerkId;
+
 	return (
 		<div className="mt-11">
 			<div className="mb-4 flex items-center justify-between">
@@ -67,7 +75,7 @@ const AllAnswers = async ({
 											</p>
 										</div>
 									</Link>
-									<div className="">
+									<div className="flex gap-2">
 										<Votes
 											downvotes={answer.downvotes.length}
 											upvotes={answer.upvotes.length}
@@ -91,6 +99,16 @@ const AllAnswers = async ({
 											type="answer"
 											userId={userId}
 										/>
+										<SignedIn>
+											{showActionButtons && (
+												<EditDeleteAction
+													type="Answer"
+													itemId={JSON.stringify(
+														answer._id
+													)}
+												/>
+											)}
+										</SignedIn>
 									</div>
 								</div>
 							</div>

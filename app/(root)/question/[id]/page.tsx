@@ -1,5 +1,6 @@
 import AnswerForm from "@/components/forms/AnswerForm";
 import AllAnswers from "@/components/shared/AllAnswers";
+import EditDeleteAction from "@/components/shared/EditDeleteAction";
 import Metric from "@/components/shared/Metric";
 import ParseHTML from "@/components/shared/ParseHTML";
 import RenderTag from "@/components/shared/RenderTag";
@@ -7,6 +8,7 @@ import Votes from "@/components/shared/Votes";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { getUserById } from "@/lib/actions/user.action";
 import { getTimestamp } from "@/lib/utils";
+import { SignedIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
@@ -48,7 +50,7 @@ const Page = async ({ params }: Params) => {
 						</p>
 					</Link>
 
-					<div className="flex justify-end">
+					<div className="flex justify-end ">
 						<Votes
 							type="question"
 							targetId={JSON.stringify(question._id)}
@@ -111,6 +113,7 @@ const Page = async ({ params }: Params) => {
 				questionId={question._id}
 				totalAnswers={question.answers.length}
 				userId={JSON.stringify(mongoUser?._id)}
+				questionClerkId={question.author.clerkId}
 			/>
 
 			<AnswerForm
