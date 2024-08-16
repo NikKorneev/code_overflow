@@ -9,7 +9,6 @@ export const connectToDatabase = async () => {
 		throw new Error("Invalid environment variable: MONGODB_URL");
 
 	if (isConnected) {
-		console.log("MongoDB is already connected");
 		return;
 	}
 

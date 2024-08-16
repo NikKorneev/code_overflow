@@ -142,3 +142,7 @@ export interface UpvoteDownvoteQuestion {
 	userId: string;
 	targetId: string;
 }
+
+export interface GetUserInfo {
+	username: string;
+}

@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { undefined } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -46,4 +47,12 @@ export const getCountToString = (count: number): string => {
 	}
 
 	return count.toString();
+};
+
+export const getDate = (createdAt: Date): string => {
+	const month = createdAt.toLocaleString("default", {
+		month: "short",
+	});
+	const year = createdAt.getFullYear();
+	return `${month} ${year}`;
 };

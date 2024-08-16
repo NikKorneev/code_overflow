@@ -18,26 +18,31 @@ import { questionsSchema } from "@/lib/validations";
 import { useRef } from "react";
 import { useTheme } from "@/context/ThemeProvider";
 import { Badge } from "../ui/badge";
-import { createQuestion } from "@/lib/actions/question.action";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
 	mongoUserId: string;
 	type?: string;
+	questionDetails?: string;
 }
 
-const QuestionForm = ({ mongoUserId, type }: Props) => {
+const QuestionForm = ({ mongoUserId, type, questionDetails }: Props) => {
 	const editorRef = useRef<null>(null);
 	const themeContext = useTheme();
 	const router = useRouter();
 	const pathname = usePathname();
 
+	const parsedQuestion = JSON.parse(questionDetails || "");
+
 	const form = useForm<z.infer<typeof questionsSchema>>({
 		resolver: zodResolver(questionsSchema),
 		defaultValues: {
-			title: "",
-			explanation: "",
-			tags: [],
+			title: parsedQuestion.title || "",
+			explanation: parsedQuestion.content || "",
+			tags:
+				parsedQuestion.tags.map((tag: { name: string }) => tag.name) ||
+				[],
 		},
 	});
 
@@ -45,18 +50,25 @@ const QuestionForm = ({ mongoUserId, type }: Props) => {
 
 	async function onSubmit(values: z.infer<typeof questionsSchema>) {
 		try {
-			//make an async to API -> create a question
-			//contain all form data
-			//navigate to home page
-			await createQuestion({
-				title: values.title,
-				content: values.explanation,
-				tags: values.tags,
-				author: JSON.parse(mongoUserId),
-				path: pathname,
-			});
+			if (type === "edit") {
+				await editQuestion({
+					content: values.explanation,
+					title: values.title,
+					questionId: parsedQuestion._id,
+					path: `/question/${parsedQuestion._id}`,
+				});
 
-			router.push("/");
+				router.push(`/question/${parsedQuestion._id}`);
+			} else {
+				await createQuestion({
+					title: values.title,
+					content: values.explanation,
+					tags: values.tags,
+					author: JSON.parse(mongoUserId),
+					path: pathname,
+				});
+				router.push("/");
+			}
 		} catch (error) {}
 	}
 
@@ -103,6 +115,7 @@ const QuestionForm = ({ mongoUserId, type }: Props) => {
 	};
 
 	const handleDelete = (str: string) => {
+		if (type === "edit") return;
 		form.setValue(
 			"tags",
 			form.getValues().tags?.filter((tag) => tag !== str)
@@ -158,7 +171,7 @@ const QuestionForm = ({ mongoUserId, type }: Props) => {
 										// @ts-ignore
 										editorRef.current = editor;
 									}}
-									initialValue=""
+									initialValue={parsedQuestion.content || ""}
 									onEditorChange={(content) =>
 										field.onChange(content)
 									}
@@ -219,11 +232,16 @@ const QuestionForm = ({ mongoUserId, type }: Props) => {
 							</FormLabel>
 							<FormControl className="mt-3.5">
 								<Input
+									disabled={type === "edit"}
 									autoComplete="off"
 									onKeyDown={(e) =>
 										handleInputKeyDown(e, field)
 									}
-									placeholder="Add tags..."
+									placeholder={
+										type === "edit"
+											? "You cant modify tags"
+											: "Add tags..."
+									}
 									className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
 								/>
 							</FormControl>
@@ -232,7 +250,11 @@ const QuestionForm = ({ mongoUserId, type }: Props) => {
 									{form.getValues().tags?.map((tag) => (
 										<Badge
 											key={tag}
-											className="subtle-medium background-light800_dark300 text-light400_light500 cursor-pointer rounded-md border-none px-4 py-2 capitalize"
+											className={`subtle-medium background-light800_dark300 text-light400_light500 ${
+												type === "edit"
+													? "cursor-default"
+													: "cursor-pointer"
+											} rounded-md border-none px-4 py-2 capitalize`}
 											onClick={() => handleDelete(tag)}
 										>
 											<p>{tag}</p>

@@ -63,6 +63,7 @@ export type Question = {
 		name: string;
 		picture: string;
 		username: string;
+		clerkId: string;
 	};
 	upvotes: Record<string, string>[];
 	downvotes: Record<string, string>[];

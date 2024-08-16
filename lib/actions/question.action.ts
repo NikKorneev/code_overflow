@@ -5,6 +5,8 @@ import { connectToDatabase } from "../mongoose";
 import Tag from "@/db/tag.model";
 import {
 	CreateQuestionParams,
+	DeleteQuestionParams,
+	EditQuestionParams,
 	GetQuestionByIdParams,
 	GetQuestionsParams,
 	GetSavedQuestionsParams,
@@ -15,6 +17,8 @@ import { revalidatePath } from "next/cache";
 import { Question as QuestionType } from "@/types";
 import { FilterQuery } from "mongoose";
 import { redirect } from "next/navigation";
+import Answer from "@/db/answer.model";
+import Interaction from "@/db/interaction.model";
 
 export async function getQuestions({
 	filter,
@@ -88,7 +92,7 @@ export async function getQuestionById({ questionId }: GetQuestionByIdParams) {
 			.populate({
 				path: "author",
 				model: User,
-				select: "_id clerkId name picture",
+				select: "_id clerkId name picture username",
 			})
 			.populate({
 				path: "tags",
@@ -96,10 +100,10 @@ export async function getQuestionById({ questionId }: GetQuestionByIdParams) {
 				select: "_id name",
 			})) as QuestionType;
 
+		if (!question) throw new Error("Question not found");
 		return question;
 	} catch (error) {
-		redirect("/");
-		throw error;
+		redirect("/not-found");
 	}
 }
 
@@ -201,6 +205,59 @@ export async function getSavedQuestions({
 		}
 
 		return { questions: res.saved as QuestionType[] };
+	} catch (error) {
+		throw error;
+	}
+}
+
+export async function deleteQuestion({
+	questionId,
+	path,
+}: DeleteQuestionParams) {
+	try {
+		connectToDatabase();
+
+		await Question.findByIdAndDelete(questionId);
+		await Answer.deleteMany({ question: questionId });
+		await Interaction.deleteMany({ question: questionId });
+
+		await User.updateMany(
+			{ saved: questionId },
+			{ $pull: { saved: questionId } }
+		);
+
+		await Tag.updateMany(
+			{ questions: questionId },
+			{ $pull: { questions: questionId } }
+		);
+
+		revalidatePath(path);
+	} catch (error) {
+		throw error;
+	}
+}
+
+export async function editQuestion({
+	content,
+	path,
+	questionId,
+	title,
+}: EditQuestionParams) {
+	try {
+		connectToDatabase();
+
+		const question = await Question.findByIdAndUpdate(questionId).populate(
+			"tags"
+		);
+
+		if (!question) throw new Error("Question not found");
+
+		question.title = title;
+		question.content = content;
+
+		await question.save();
+
+		revalidatePath(path);
 	} catch (error) {
 		throw error;
 	}

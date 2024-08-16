@@ -5,12 +5,14 @@ import { connectToDatabase } from "../mongoose";
 import {
 	AnswerVoteParams,
 	CreateAnswerParams,
+	DeleteAnswerParams,
 	GetAnswersParams,
 } from "./shared.types";
 import Question from "@/db/question.model";
 import { revalidatePath } from "next/cache";
-import { IAnswer } from "@/types";
 import User from "@/db/user.model";
+import Interaction from "@/db/interaction.model";
+import { Tag } from "lucide-react";
 
 export async function createAnswer({
 	author,
@@ -117,6 +119,27 @@ export async function downvoteAnswer({
 				$addToSet: { downvotes: userId },
 			});
 		}
+		revalidatePath(path);
+	} catch (error) {
+		throw error;
+	}
+}
+
+export async function deleteAnswer({ answerId, path }: DeleteAnswerParams) {
+	try {
+		connectToDatabase();
+
+		const answer = await Answer.findById(answerId);
+
+		if (!answer) {
+			throw new Error("Answer not found");
+		}
+		await Answer.deleteOne({ _id: answerId });
+		await Question.findByIdAndUpdate(answer.question._id, {
+			$pull: { answers: answerId },
+		});
+		await Interaction.deleteMany({ answer: answerId });
+
 		revalidatePath(path);
 	} catch (error) {
 		throw error;
