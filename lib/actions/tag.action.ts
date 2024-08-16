@@ -12,6 +12,7 @@ import { Tag as TagType, Question as QuestionType } from "@/types";
 import Question from "@/db/question.model";
 import { FilterQuery } from "mongoose";
 import { redirect } from "next/navigation";
+import console from "console";
 
 export async function getUserTags({
 	userId,
@@ -98,5 +99,28 @@ export async function getQuestionsByTagId({
 	} catch (error) {
 		console.log(error);
 		redirect("/not-found");
+	}
+}
+
+export async function getHotTags() {
+	try {
+		connectToDatabase();
+
+		const hotTags = await Tag.aggregate([
+			{
+				$project: {
+					name: 1,
+					numberOfQuestions: { $size: "$questions" },
+				},
+			},
+			{ $sort: { numberOfQuestions: -1 } },
+			{ $limit: 5 },
+		]);
+
+		return { hotTags: hotTags || [] };
+	} catch (error) {
+		console.log(error);
+
+		return { hotTags: [] };
 	}
 }
