@@ -15,6 +15,8 @@ import { revalidatePath } from "next/cache";
 import Question from "@/db/question.model";
 import { redirect } from "next/navigation";
 import Answer from "@/db/answer.model";
+import { FilterQuery } from "mongoose";
+import { escapeRegExp } from "../utils";
 
 type Params = {
 	userId: string;
@@ -90,12 +92,30 @@ export async function deleteUser(params: DeleteUserParams) {
 	}
 }
 
-export async function getUsers(params: GetAllUsersParams) {
+export async function getUsers({ searchQuery }: GetAllUsersParams) {
 	try {
 		await connectToDatabase();
+
+		const query: FilterQuery<typeof User> = {};
+
+		if (searchQuery) {
+			query.$or = [
+				{
+					name: {
+						$regex: new RegExp(escapeRegExp(searchQuery), "i"),
+					},
+				},
+				{
+					username: {
+						$regex: new RegExp(escapeRegExp(searchQuery), "i"),
+					},
+				},
+			];
+		}
+
 		// const { page = 1, pageSize = 20, filter, searchQuery } = params;
 
-		const users = await User.find({}).sort({ createdAt: -1 });
+		const users = await User.find(query).sort({ createdAt: -1 });
 
 		return { users };
 	} catch (error) {
