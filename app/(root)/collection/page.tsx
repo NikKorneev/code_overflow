@@ -7,8 +7,9 @@ import { redirect } from "next/navigation";
 import { getSavedQuestions } from "@/lib/actions/question.action";
 import QuestionCard from "@/components/shared/cards/QuestionCard";
 import { auth } from "@clerk/nextjs/server";
+import { SearchParamsProps } from "@/types";
 
-const Collection = async () => {
+const Collection = async ({ searchParams }: SearchParamsProps) => {
 	const { userId } = auth();
 
 	if (!userId) {
@@ -16,6 +17,7 @@ const Collection = async () => {
 	}
 
 	const { questions } = await getSavedQuestions({
+		searchQuery: searchParams?.q,
 		clerkId: userId!,
 	});
 
@@ -25,7 +27,7 @@ const Collection = async () => {
 
 			<div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center ">
 				<LocalSearch
-					route="/"
+					route="/collection"
 					placeholder="Search questions..."
 					otherClasses="flex-1"
 				/>{" "}

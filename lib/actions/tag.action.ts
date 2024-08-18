@@ -13,6 +13,7 @@ import Question from "@/db/question.model";
 import { FilterQuery } from "mongoose";
 import { redirect } from "next/navigation";
 import console from "console";
+import { escapeRegExp } from "../utils";
 
 export async function getUserTags({
 	userId,
@@ -55,7 +56,26 @@ export async function getAllTags({
 	try {
 		await connectToDatabase();
 
-		const tags = (await Tag.find({}).sort({ createdAt: -1 })) as TagType[];
+		const query: FilterQuery<typeof Tag> = {};
+
+		if (searchQuery) {
+			query.$or = [
+				{
+					name: {
+						$regex: new RegExp(escapeRegExp(searchQuery), "i"),
+					},
+				},
+				{
+					description: {
+						$regex: new RegExp(escapeRegExp(searchQuery), "i"),
+					},
+				},
+			];
+		}
+
+		const tags = (await Tag.find(query).sort({
+			createdAt: -1,
+		})) as TagType[];
 
 		return { tags };
 	} catch (error) {
@@ -74,12 +94,27 @@ export async function getQuestionsByTagId({
 
 		const tagFilter: FilterQuery<ITag> = { _id: tagId };
 
+		const query: FilterQuery<typeof Question> = {};
+
+		if (searchQuery) {
+			query.$or = [
+				{
+					title: {
+						$regex: new RegExp(escapeRegExp(searchQuery), "i"),
+					},
+				},
+				{
+					content: {
+						$regex: new RegExp(escapeRegExp(searchQuery), "i"),
+					},
+				},
+			];
+		}
+
 		const tag = await Tag.findOne(tagFilter).populate({
 			path: "questions",
 			model: Question,
-			match: searchQuery
-				? { name: { $regex: new RegExp(searchQuery, "i") } }
-				: {},
+			match: query,
 			populate: [
 				{
 					path: "author",
