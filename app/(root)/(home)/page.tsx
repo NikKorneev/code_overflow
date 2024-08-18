@@ -6,12 +6,14 @@ import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 import React from "react";
 import NoResult from "@/components/shared/NoResult";
-import { Question } from "@/types";
+import { Question, SearchParamsProps } from "@/types";
 import { getQuestions } from "@/lib/actions/question.action";
 import QuestionCard from "@/components/shared/cards/QuestionCard";
 
-const Home = async () => {
-	const result = (await getQuestions({})) as {
+const Home = async ({ searchParams }: SearchParamsProps) => {
+	const result = (await getQuestions({
+		searchQuery: searchParams?.q,
+	})) as {
 		questions: Question[];
 	};
 

@@ -4,10 +4,13 @@ import NoResult from "@/components/shared/NoResult";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { TagFilters } from "@/constants/filters";
 import { getAllTags } from "@/lib/actions/tag.action";
+import { SearchParamsProps } from "@/types";
 import React from "react";
 
-const Page = async () => {
-	const { tags } = await getAllTags({});
+const Page = async ({ searchParams }: SearchParamsProps) => {
+	const { tags } = await getAllTags({
+		searchQuery: searchParams?.q,
+	});
 
 	return (
 		<>

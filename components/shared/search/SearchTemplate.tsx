@@ -1,18 +1,22 @@
+"use client";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import React from "react";
 
 type SearchTemplateProps = {
 	placeholder: string;
 	containerStyles?: string;
 	styles?: string;
 	iconPosition?: "left" | "right";
+	value?: string;
+	setValue?: React.ChangeEventHandler<HTMLInputElement>;
 };
 const SearchTemplate = ({
 	placeholder,
 	containerStyles,
 	styles,
 	iconPosition = "left",
+	setValue,
+	value,
 }: SearchTemplateProps) => {
 	return (
 		<div className={`relative w-full ${containerStyles}`}>
@@ -31,6 +35,8 @@ const SearchTemplate = ({
 				<Input
 					placeholder={placeholder}
 					type="text"
+					value={value}
+					onChange={setValue}
 					className="paragraph-regular no-focus placeholder text-dark400_light700 background-light800_darkgradient  border-none shadow-none outline-none"
 				/>
 			</div>

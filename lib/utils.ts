@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { undefined } from "zod";
+import qs from "query-string";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -56,3 +56,52 @@ export const getDate = (createdAt: Date): string => {
 	const year = createdAt.getFullYear();
 	return `${month} ${year}`;
 };
+
+interface UrlQueryParams {
+	params: string;
+	key: string;
+	value: string | null;
+}
+
+export const formUrlQuery = ({ key, params, value }: UrlQueryParams) => {
+	const currentUrl = qs.parse(params);
+
+	currentUrl[key] = value;
+
+	return qs.stringifyUrl(
+		{
+			url: window.location.pathname,
+			query: currentUrl,
+		},
+		{
+			skipNull: true,
+		}
+	);
+};
+
+interface RemoveUrlQueryParams {
+	params: string;
+	keys: string[];
+}
+
+export const removeKeysFromQuery = ({ keys, params }: RemoveUrlQueryParams) => {
+	const currentUrl = qs.parse(params);
+
+	keys.forEach((key) => {
+		delete currentUrl[key];
+	});
+
+	return qs.stringifyUrl(
+		{
+			url: window.location.pathname,
+			query: currentUrl,
+		},
+		{
+			skipNull: true,
+		}
+	);
+};
+
+export function escapeRegExp(string: string) {
+	return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+}

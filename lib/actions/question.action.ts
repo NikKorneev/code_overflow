@@ -19,6 +19,7 @@ import { FilterQuery } from "mongoose";
 import { redirect } from "next/navigation";
 import Answer from "@/db/answer.model";
 import Interaction from "@/db/interaction.model";
+import { escapeRegExp } from "../utils";
 
 export async function getQuestions({
 	filter,
@@ -31,7 +32,24 @@ export async function getQuestions({
 	try {
 		await connectToDatabase();
 
-		const result = await Question.find({})
+		const query: FilterQuery<typeof Question> = {};
+
+		if (searchQuery) {
+			query.$or = [
+				{
+					title: {
+						$regex: new RegExp(escapeRegExp(searchQuery), "i"),
+					},
+				},
+				{
+					content: {
+						$regex: new RegExp(escapeRegExp(searchQuery), "i"),
+					},
+				},
+			];
+		}
+
+		const result = await Question.find(query)
 			.populate({
 				path: "tags",
 				model: Tag,
@@ -179,9 +197,22 @@ export async function getSavedQuestions({
 	try {
 		await connectToDatabase();
 
-		const query: FilterQuery<typeof Question> = searchQuery
-			? { title: { $regex: new RegExp(searchQuery, "i") } }
-			: {};
+		const query: FilterQuery<typeof Question> = {};
+
+		if (searchQuery) {
+			query.$or = [
+				{
+					title: {
+						$regex: new RegExp(escapeRegExp(searchQuery), "i"),
+					},
+				},
+				{
+					content: {
+						$regex: new RegExp(escapeRegExp(searchQuery), "i"),
+					},
+				},
+			];
+		}
 
 		const res = await User.findOne({ clerkId }).populate({
 			path: "saved",
