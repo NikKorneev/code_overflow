@@ -14,7 +14,7 @@ type Props = {
 	questionId: string;
 	totalAnswers: number;
 	userId: string;
-	page?: number;
+	page: number | string;
 	filter?: string;
 	questionClerkId?: string;
 };
@@ -24,10 +24,14 @@ const AllAnswers = async ({
 	userId,
 	filter,
 	questionClerkId,
-	page = 1,
+	page,
 }: Props) => {
 	const { userId: curClerkId } = auth();
-	const { results } = await getAnswers({ questionId });
+	const { results } = await getAnswers({
+		questionId,
+		page: page ? +page : 1,
+		sortBy: filter,
+	});
 	const showActionButtons = questionClerkId === curClerkId;
 
 	return (

@@ -13,6 +13,7 @@ import QuestionCard from "@/components/shared/cards/QuestionCard";
 const Home = async ({ searchParams }: SearchParamsProps) => {
 	const result = (await getQuestions({
 		searchQuery: searchParams?.q,
+		filter: searchParams?.filter,
 	})) as {
 		questions: Question[];
 	};

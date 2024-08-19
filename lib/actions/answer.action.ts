@@ -48,6 +48,34 @@ export async function getAnswers({
 	try {
 		await connectToDatabase();
 
+		let sortOptions = {};
+		switch (sortBy) {
+			case "highestUpvotes":
+				sortOptions = {
+					upvotes: -1,
+				};
+
+				break;
+			case "lowestUpvotes":
+				sortOptions = {
+					upvotes: 1,
+				};
+				break;
+			case "recent":
+				sortOptions = {
+					createdAt: -1,
+				};
+				break;
+			case "old":
+				sortOptions = {
+					createdAt: 1,
+				};
+				break;
+
+			default:
+				break;
+		}
+
 		const results = await Answer.find({
 			question: questionId,
 		})
@@ -56,7 +84,7 @@ export async function getAnswers({
 				model: User,
 				select: "_id clerkId name picture username",
 			})
-			.sort({ createdAt: -1 });
+			.sort(sortOptions);
 
 		return { results };
 	} catch (error) {

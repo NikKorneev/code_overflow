@@ -8,6 +8,7 @@ import Votes from "@/components/shared/Votes";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { getUserById } from "@/lib/actions/user.action";
 import { getTimestamp } from "@/lib/utils";
+import { URLProps } from "@/types";
 import { SignedIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
@@ -20,7 +21,7 @@ type Params = {
 	};
 };
 
-const Page = async ({ params }: Params) => {
+const Page = async ({ params, searchParams }: URLProps) => {
 	const question = await getQuestionById({ questionId: params.id });
 	const { userId } = auth();
 
@@ -114,6 +115,8 @@ const Page = async ({ params }: Params) => {
 				totalAnswers={question.answers.length}
 				userId={JSON.stringify(mongoUser?._id)}
 				questionClerkId={question.author.clerkId}
+				filter={searchParams?.filter}
+				page={searchParams?.page || 0}
 			/>
 
 			<AnswerForm

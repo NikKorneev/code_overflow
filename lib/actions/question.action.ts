@@ -49,6 +49,23 @@ export async function getQuestions({
 			];
 		}
 
+		let sortOptions = {};
+
+		switch (filter) {
+			case "newest":
+				sortOptions = { createdAt: -1 };
+				break;
+			case "frequent":
+				sortOptions = { views: -1 };
+				break;
+			case "unanswered":
+				query.answers = { $size: 0 };
+				break;
+
+			default:
+				break;
+		}
+
 		const result = await Question.find(query)
 			.populate({
 				path: "tags",
@@ -58,7 +75,7 @@ export async function getQuestions({
 				path: "author",
 				model: User,
 			})
-			.sort({ createdAt: -1 });
+			.sort(sortOptions);
 
 		return {
 			questions: result,
@@ -214,12 +231,35 @@ export async function getSavedQuestions({
 			];
 		}
 
+		let sortOptions = {};
+
+		switch (filter) {
+			case "most_recent":
+				sortOptions = { createdAt: -1 };
+				break;
+			case "oldest":
+				sortOptions = { createdAt: 1 };
+				break;
+			case "most_voted":
+				sortOptions = { upvotes: -1 };
+				break;
+			case "most_viewed":
+				sortOptions = { views: -1 };
+				break;
+			case "most_answered":
+				sortOptions = { answers: -1 };
+				break;
+
+			default:
+				break;
+		}
+
 		const res = await User.findOne({ clerkId }).populate({
 			path: "saved",
 			model: Question,
 			match: query,
 			options: {
-				sort: { createdAt: -1 },
+				sort: sortOptions,
 			},
 			populate: [
 				{ path: "tags", model: Tag, select: "_id name" },
