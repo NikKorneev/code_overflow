@@ -38,11 +38,8 @@ export async function getUserById(params: Params) {
 export async function createUserByClerkId(userData: CreateUserParams) {
 	try {
 		await connectToDatabase();
-		console.log("userData", userData);
 
 		const newUser = await User.create(userData);
-
-		console.log("newUser", newUser);
 
 		return newUser;
 	} catch (error) {
@@ -92,9 +89,16 @@ export async function deleteUser(params: DeleteUserParams) {
 	}
 }
 
-export async function getUsers({ searchQuery, filter }: GetAllUsersParams) {
+export async function getUsers({
+	searchQuery,
+	filter,
+	page = 1,
+	pageSize = 10,
+}: GetAllUsersParams) {
 	try {
 		await connectToDatabase();
+
+		const skipAmount = (page - 1) * pageSize;
 
 		const query: FilterQuery<typeof User> = {};
 
@@ -129,11 +133,16 @@ export async function getUsers({ searchQuery, filter }: GetAllUsersParams) {
 				break;
 		}
 
-		// const { page = 1, pageSize = 20, filter, searchQuery } = params;
+		const users = await User.find(query)
+			.skip(skipAmount)
+			.limit(pageSize)
+			.sort(sortOptions);
 
-		const users = await User.find(query).sort(sortOptions);
+		const totalUsers = await User.countDocuments(query);
 
-		return { users };
+		const isNext = totalUsers > skipAmount + users.length;
+
+		return { users, isNext };
 	} catch (error) {
 		throw error;
 	}
@@ -192,13 +201,21 @@ export async function getUserProfile(params: GetUserInfo) {
 
 export async function getUserQuestions({
 	userId,
-	page,
-	pageSize,
+	page = 1,
+	pageSize = 10,
 }: GetUserStatsParams) {
 	try {
 		await connectToDatabase();
 
+		const skipAmount = (page - 1) * pageSize;
+
+		const totalQuestions = await Question.countDocuments({
+			author: userId,
+		});
+
 		const questions = await Question.find({ author: userId })
+			.skip(skipAmount)
+			.limit(pageSize)
 			.sort({
 				views: -1,
 				upvotes: -1,
@@ -206,7 +223,9 @@ export async function getUserQuestions({
 			.populate("tags", "_id name")
 			.populate("author", "_id clerkId name picture");
 
-		return { questions: questions || [] };
+		const isNext = totalQuestions > skipAmount + questions.length;
+
+		return { questions: questions || [], isNext };
 	} catch (error) {
 		throw error;
 	}
@@ -214,16 +233,27 @@ export async function getUserQuestions({
 
 export async function getUserAnswers({
 	userId,
-	page,
-	pageSize,
+	page = 1,
+	pageSize = 10,
 }: GetUserStatsParams) {
 	try {
 		connectToDatabase();
+
+		const skipAmount = (page - 1) * pageSize;
+
 		const answers = await Answer.find({ author: userId })
 			.populate("question", "_id title")
+			.skip(skipAmount)
+			.limit(pageSize)
 			.sort({ upvotes: -1 });
 
-		return { answers: answers || [] };
+		const totalAnswers = await Answer.countDocuments({
+			author: userId,
+		});
+
+		const isNext = totalAnswers > skipAmount + answers.length;
+
+		return { answers: answers || [], isNext };
 	} catch (error) {
 		alert("Something went very wrong. Please try again later.");
 		throw error;

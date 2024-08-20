@@ -23,14 +23,17 @@ import { escapeRegExp } from "../utils";
 
 export async function getQuestions({
 	filter,
-	page,
-	pageSize,
+	page = 1,
+	pageSize = 10,
 	searchQuery,
 	saved,
 	userId,
 }: GetQuestionsParams) {
 	try {
 		await connectToDatabase();
+
+		//skip amount of posts
+		const skipAmount = (page - 1) * pageSize;
 
 		const query: FilterQuery<typeof Question> = {};
 
@@ -75,10 +78,17 @@ export async function getQuestions({
 				path: "author",
 				model: User,
 			})
+			.skip(skipAmount)
+			.limit(pageSize)
 			.sort(sortOptions);
+
+		const totalQuestions = await Question.countDocuments(query);
+
+		const isNext = totalQuestions > skipAmount + result.length;
 
 		return {
 			questions: result,
+			isNext,
 		};
 	} catch (error) {
 		throw error;
@@ -207,12 +217,14 @@ export async function downvoteQuestion({
 export async function getSavedQuestions({
 	clerkId,
 	filter,
-	page,
-	pageSize,
+	page = 1,
+	pageSize = 10,
 	searchQuery,
 }: GetSavedQuestionsParams) {
 	try {
 		await connectToDatabase();
+
+		const skipAmount = (page - 1) * pageSize;
 
 		const query: FilterQuery<typeof Question> = {};
 
@@ -259,6 +271,8 @@ export async function getSavedQuestions({
 			model: Question,
 			match: query,
 			options: {
+				skip: skipAmount,
+				limit: pageSize + 1,
 				sort: sortOptions,
 			},
 			populate: [
@@ -271,11 +285,13 @@ export async function getSavedQuestions({
 			],
 		});
 
+		const isNext = res.saved.length > pageSize;
+
 		if (!res) {
 			throw new Error("no user found");
 		}
 
-		return { questions: res.saved as QuestionType[] };
+		return { questions: res.saved as QuestionType[], isNext };
 	} catch (error) {
 		throw error;
 	}

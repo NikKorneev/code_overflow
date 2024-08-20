@@ -8,6 +8,7 @@ import { getSavedQuestions } from "@/lib/actions/question.action";
 import QuestionCard from "@/components/shared/cards/QuestionCard";
 import { auth } from "@clerk/nextjs/server";
 import { SearchParamsProps } from "@/types";
+import Pagination from "@/components/shared/Pagination";
 
 const Collection = async ({ searchParams }: SearchParamsProps) => {
 	const { userId } = auth();
@@ -16,10 +17,12 @@ const Collection = async ({ searchParams }: SearchParamsProps) => {
 		redirect("/sign-in");
 	}
 
-	const { questions } = await getSavedQuestions({
+	const { questions, isNext } = await getSavedQuestions({
 		searchQuery: searchParams?.q,
 		clerkId: userId!,
 		filter: searchParams?.filter,
+		page: searchParams?.page ? +searchParams?.page : 1,
+		pageSize: 15,
 	});
 
 	return (
@@ -61,6 +64,12 @@ const Collection = async ({ searchParams }: SearchParamsProps) => {
 						btnText="All Questions"
 					/>
 				)}
+			</div>
+			<div className="mt-10">
+				<Pagination
+					pageNumber={searchParams?.page ? +searchParams?.page : 1}
+					isNext={isNext}
+				/>
 			</div>
 		</>
 	);

@@ -116,7 +116,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 				userId={JSON.stringify(mongoUser?._id)}
 				questionClerkId={question.author.clerkId}
 				filter={searchParams?.filter}
-				page={searchParams?.page || 0}
+				page={searchParams?.page || 1}
 			/>
 
 			<AnswerForm

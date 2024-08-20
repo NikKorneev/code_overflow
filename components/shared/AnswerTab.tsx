@@ -1,6 +1,7 @@
 import { getUserAnswers } from "@/lib/actions/user.action";
 import AnswerCard from "./cards/AnswerCard";
 import { auth } from "@clerk/nextjs/server";
+import Pagination from "./Pagination";
 
 type Props = {
 	userId: string;
@@ -9,7 +10,13 @@ type Props = {
 };
 
 const AnswerTab = async ({ userId, searchParams, clerkId }: Props) => {
-	const { answers } = await getUserAnswers({ userId: userId, page: 1 });
+	const { answers, isNext } = await getUserAnswers({
+		userId: userId,
+		page: searchParams?.userAnswersPage
+			? +searchParams?.userAnswersPage
+			: 1,
+		pageSize: 10,
+	});
 	const { userId: currentUserId } = auth();
 
 	return (
@@ -30,6 +37,17 @@ const AnswerTab = async ({ userId, searchParams, clerkId }: Props) => {
 					))}
 				</div>
 			)}
+			<div className="mt-5">
+				<Pagination
+					type="userAnswersPage"
+					pageNumber={
+						searchParams?.userAnswersPage
+							? +searchParams?.userAnswersPage
+							: 1
+					}
+					isNext={isNext}
+				/>
+			</div>
 		</>
 	);
 };
