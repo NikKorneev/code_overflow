@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SearchTemplate from "./SearchTemplate";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
@@ -9,10 +9,29 @@ const GlobalSearch = () => {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
+	const searchContainerRef = useRef<HTMLDivElement | null>(null);
 
 	const query = searchParams?.get("g");
 	const [search, setSearch] = useState(query || "");
 	const [isOpen, setIsOpen] = useState(false);
+
+	useEffect(() => {
+		const handleOutsideClick = (event: any) => {
+			if (
+				searchContainerRef.current &&
+				!searchContainerRef.current.contains(event.target)
+			) {
+				setIsOpen(false);
+				setSearch("");
+			}
+		};
+
+		setIsOpen(false);
+
+		document.addEventListener("click", handleOutsideClick);
+
+		return () => document.removeEventListener("click", handleOutsideClick);
+	}, [pathname]);
 
 	useEffect(() => {
 		const delayDebounceFn = setTimeout(() => {
@@ -39,7 +58,10 @@ const GlobalSearch = () => {
 	}, [search, router, pathname, searchParams, query]);
 
 	return (
-		<div className="relative w-[45vw] max-lg:hidden xl:w-[38vw]">
+		<div
+			className="relative w-[45vw] max-lg:hidden xl:w-[38vw]"
+			ref={searchContainerRef}
+		>
 			<SearchTemplate
 				setValue={(e) => {
 					setSearch(e.target.value);
