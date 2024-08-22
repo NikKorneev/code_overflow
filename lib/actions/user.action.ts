@@ -217,6 +217,7 @@ export async function getUserQuestions({
 			.skip(skipAmount)
 			.limit(pageSize)
 			.sort({
+				createdAt: -1,
 				views: -1,
 				upvotes: -1,
 			})

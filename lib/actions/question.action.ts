@@ -125,8 +125,21 @@ export async function createQuestion(params: CreateQuestionParams) {
 			$push: { tags: { $each: tagDocuments } },
 		});
 
+		await Interaction.create({
+			user: author,
+			action: "ask_question",
+			question: question._id,
+			tags: tagDocuments,
+		});
+
+		await User.findByIdAndUpdate(author, {
+			$inc: { reputation: 5 },
+		});
+
 		revalidatePath(path);
-	} catch (error) {}
+	} catch (error) {
+		console.log(error);
+	}
 }
 
 export async function getQuestionById({ questionId }: GetQuestionByIdParams) {
@@ -162,18 +175,34 @@ export async function upvoteQuestion({
 	try {
 		await connectToDatabase();
 
+		let question;
+
 		if (hasupVoted) {
-			await Question.findByIdAndUpdate(questionId, {
+			question = await Question.findByIdAndUpdate(questionId, {
 				$pull: { upvotes: userId },
 			});
 		} else if (hasdownVoted) {
-			await Question.findByIdAndUpdate(questionId, {
+			question = await Question.findByIdAndUpdate(questionId, {
 				$push: { upvotes: userId },
 				$pull: { downvotes: userId },
 			});
 		} else {
-			await Question.findByIdAndUpdate(questionId, {
+			question = await Question.findByIdAndUpdate(questionId, {
 				$addToSet: { upvotes: userId },
+			});
+		}
+
+		//increment author's reputation by 1/-1 for upvote/revoke an upvote to the question
+
+		await User.findByIdAndUpdate(userId, {
+			$inc: { reputation: hasupVoted ? -1 : 1 },
+		});
+
+		//increment author's reputation by 1/-1 for recieve an upvote/upvote to the question
+
+		if (JSON.parse(JSON.stringify(question.author)) !== userId) {
+			await User.findByIdAndUpdate(question.author, {
+				$inc: { reputation: hasupVoted ? -10 : 10 },
 			});
 		}
 
@@ -193,18 +222,32 @@ export async function downvoteQuestion({
 	try {
 		await connectToDatabase();
 
+		let question;
+
 		if (hasdownVoted) {
-			await Question.findByIdAndUpdate(questionId, {
+			question = await Question.findByIdAndUpdate(questionId, {
 				$pull: { downvotes: userId },
 			});
 		} else if (hasupVoted) {
-			await Question.findByIdAndUpdate(questionId, {
+			question = await Question.findByIdAndUpdate(questionId, {
 				$push: { downvotes: userId },
 				$pull: { upvotes: userId },
 			});
 		} else {
-			await Question.findByIdAndUpdate(questionId, {
+			question = await Question.findByIdAndUpdate(questionId, {
 				$addToSet: { downvotes: userId },
+			});
+		}
+
+		await User.findByIdAndUpdate(userId, {
+			$inc: { reputation: hasdownVoted ? 1 : -1 },
+		});
+
+		//increment author's reputation by 1/-1 for recieve an upvote/upvote to the question
+
+		if (JSON.parse(JSON.stringify(question.author)) !== userId) {
+			await User.findByIdAndUpdate(question.author, {
+				$inc: { reputation: hasdownVoted ? 10 : -10 },
 			});
 		}
 

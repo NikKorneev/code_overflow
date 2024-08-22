@@ -12,7 +12,6 @@ import Question from "@/db/question.model";
 import { revalidatePath } from "next/cache";
 import User from "@/db/user.model";
 import Interaction from "@/db/interaction.model";
-import { Tag } from "lucide-react";
 
 export async function createAnswer({
 	author,
@@ -29,8 +28,20 @@ export async function createAnswer({
 			question,
 		});
 
-		await Question.findByIdAndUpdate(question, {
+		const questionRes = await Question.findByIdAndUpdate(question, {
 			$push: { answers: answer._id },
+		});
+
+		await Interaction.create({
+			user: author,
+			action: "answer",
+			question,
+			answer: answer._id,
+			tags: questionRes.tags,
+		});
+
+		await User.findByIdAndUpdate(author, {
+			$inc: { reputation: 10 },
 		});
 
 		revalidatePath(path);
@@ -112,6 +123,8 @@ export async function upvoteAnswer({
 	try {
 		await connectToDatabase();
 
+		const answer = await Answer.findById(answerId);
+
 		if (hasupVoted) {
 			await Answer.findByIdAndUpdate(answerId, {
 				$pull: { upvotes: userId },
@@ -124,6 +137,16 @@ export async function upvoteAnswer({
 		} else {
 			await Answer.findByIdAndUpdate(answerId, {
 				$addToSet: { upvotes: userId },
+			});
+		}
+
+		await User.findByIdAndUpdate(userId, {
+			$inc: { reputation: hasupVoted ? -2 : 2 },
+		});
+
+		if (userId !== JSON.parse(JSON.stringify(answer.author))) {
+			await User.findByIdAndUpdate(answer.author, {
+				$inc: { reputation: hasupVoted ? -10 : 10 },
 			});
 		}
 
@@ -142,21 +165,33 @@ export async function downvoteAnswer({
 }: AnswerVoteParams) {
 	try {
 		await connectToDatabase();
+		let answer;
 
 		if (hasdownVoted) {
-			await Answer.findByIdAndUpdate(answerId, {
+			answer = await Answer.findByIdAndUpdate(answerId, {
 				$pull: { downvotes: userId },
 			});
 		} else if (hasupVoted) {
-			await Answer.findByIdAndUpdate(answerId, {
+			answer = await Answer.findByIdAndUpdate(answerId, {
 				$push: { downvotes: userId },
 				$pull: { upvotes: userId },
 			});
 		} else {
-			await Answer.findByIdAndUpdate(answerId, {
+			answer = await Answer.findByIdAndUpdate(answerId, {
 				$addToSet: { downvotes: userId },
 			});
 		}
+
+		await User.findByIdAndUpdate(userId, {
+			$inc: { reputation: hasdownVoted ? 2 : -2 },
+		});
+
+		if (userId !== JSON.parse(JSON.stringify(answer.author))) {
+			await User.findByIdAndUpdate(answer.author, {
+				$inc: { reputation: hasdownVoted ? 10 : -10 },
+			});
+		}
+
 		revalidatePath(path);
 	} catch (error) {
 		throw error;
