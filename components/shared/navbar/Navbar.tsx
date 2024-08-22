@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
 	return (
-		<nav className="flex-between background-light900_dark200 fixed z-50 w-full items-center gap-5 px-6 py-4  shadow-light-300 dark:shadow-none sm:px-12">
+		<nav className="flex-between background-light900_dark200 fixed z-50 w-full items-center gap-5 px-6 py-4  shadow-light-300 sm:px-12 dark:shadow-none">
 			<Link href="/" className="flex items-center gap-1">
 				<Image
 					src="/assets/images/site-logo.svg"
@@ -18,7 +18,7 @@ const Navbar = () => {
 					alt="site logo CodeOverflow"
 				/>
 
-				<p className="h2-bold font-spaceGrotesk text-dark-100 dark:text-light-900 max-sm:hidden">
+				<p className="h2-bold font-spaceGrotesk text-dark-100 max-sm:hidden dark:text-light-900">
 					Code<span className="text-primary-500">Overflow</span>
 				</p>
 			</Link>
