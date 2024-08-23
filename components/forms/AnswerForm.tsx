@@ -78,9 +78,18 @@ const AnswerForm = ({ question, questionId, authorId }: Props) => {
 			);
 
 			const aiAnswer = await response.json();
-			alert(aiAnswer.reply);
-		} catch (e) {
-			console.log(e);
+
+			const formattedAnswer = aiAnswer?.reply?.replace(/\n/g, "<br />");
+
+			if (editorRef.current) {
+				const editor = editorRef.current as any;
+
+				editor.setContent(formattedAnswer);
+			}
+
+			//toast
+		} catch (error) {
+			console.log(error);
 		} finally {
 			setIsSubmittingAi(false);
 		}
@@ -98,14 +107,20 @@ const AnswerForm = ({ question, questionId, authorId }: Props) => {
 					onClick={generateAIAnswer}
 					disabled={isSubmittingAi || form.formState.isSubmitting}
 				>
-					<Image
-						src="/assets/icons/stars.svg"
-						alt="stars icon"
-						width={12}
-						height={12}
-						className="object-contain"
-					/>
-					Generate an AI Answer
+					{isSubmittingAi ? (
+						<>Generating...</>
+					) : (
+						<>
+							<Image
+								src="/assets/icons/stars.svg"
+								alt="stars icon"
+								width={12}
+								height={12}
+								className="object-contain"
+							/>
+							Generate an AI Answer
+						</>
+					)}
 				</Button>
 			</div>
 

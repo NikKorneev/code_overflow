@@ -1,8 +1,8 @@
-import console from "console";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(req: Request) {
 	const { question } = await req.json();
+	console.log(req?.geo?.country);
 
 	try {
 		const response = await fetch(
@@ -29,13 +29,16 @@ export async function POST(req: Request) {
 				}),
 			}
 		);
-		console.log(response);
 
 		const responseData = await response.json();
-		const reply = responseData.choices[0].message.content;
+		const reply = responseData?.choices
+			? responseData.choices[0].message.content
+			: "{}";
 
 		return NextResponse.json({ reply });
 	} catch (error) {
+		console.log(error);
+
 		return NextResponse.json({ error: (error as Error).message });
 	}
 }
