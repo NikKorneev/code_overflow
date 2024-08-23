@@ -16,7 +16,8 @@ import Question from "@/db/question.model";
 import { redirect } from "next/navigation";
 import Answer from "@/db/answer.model";
 import { FilterQuery } from "mongoose";
-import { escapeRegExp } from "../utils";
+import { assingBadges, escapeRegExp } from "../utils";
+import { BadgeCriteriaType, BadgeParam } from "@/types";
 
 type Params = {
 	userId: string;
@@ -193,9 +194,101 @@ export async function getUserProfile(params: GetUserInfo) {
 			author: res._id,
 		});
 
-		return { user: res, totalAnswers, totalQuestions };
+		const [questionUpvotes] = await Question.aggregate([
+			{
+				$match: {
+					author: res._id,
+				},
+			},
+			{
+				$project: {
+					_id: 0,
+					upvotes: { $size: "$upvotes" },
+				},
+			},
+			{
+				$group: {
+					_id: null,
+					totalUpvotes: { $sum: "$upvotes" },
+				},
+			},
+		]);
+
+		const [answerUpvotes] = await Answer.aggregate([
+			{
+				$match: {
+					author: res._id,
+				},
+			},
+			{
+				$project: {
+					_id: 0,
+					upvotes: { $size: "$upvotes" },
+				},
+			},
+			{
+				$group: {
+					_id: null,
+					totalUpvotes: { $sum: "$upvotes" },
+				},
+			},
+		]);
+
+		const [questionViews] = await Answer.aggregate([
+			{
+				$match: {
+					author: res._id,
+				},
+			},
+			{
+				$group: {
+					_id: null,
+					totalViews: { $sum: "$views" },
+				},
+			},
+		]);
+
+		const criteria: BadgeParam = [
+			{
+				type: "QUESTION_COUNT",
+				count: totalQuestions,
+			},
+			{
+				type: "ANSWER_COUNT",
+				count: totalAnswers,
+			},
+			{
+				type: "QUESTION_UPVOTES",
+				count: questionUpvotes?.totalUpvotes
+					? +questionUpvotes?.totalUpvotes
+					: 0,
+			},
+			{
+				type: "ANSWER_UPVOTES",
+				count: answerUpvotes?.totalUpvotes
+					? +answerUpvotes?.totalUpvotes
+					: 0,
+			},
+			{
+				type: "TOTAL_VIEWS",
+				count: questionViews?.totalViews
+					? +questionViews?.totalViews
+					: 0,
+			},
+		];
+
+		const badgeCounts = assingBadges(criteria);
+
+		return {
+			user: res,
+			totalAnswers,
+			totalQuestions,
+			badgeCounts,
+			reputation: res.reputation,
+		};
 	} catch (error) {
-		redirect("/not-found");
+		throw error;
+		// redirect("/not-found");
 	}
 }
 

@@ -80,3 +80,8 @@ export type IAnswer = {
 	downvotes: any[];
 	createdAt: Date;
 };
+
+export type BadgeParam = {
+	type: BadgeCriteriaType;
+	count: number;
+}[];

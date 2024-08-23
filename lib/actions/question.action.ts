@@ -158,10 +158,10 @@ export async function getQuestionById({ questionId }: GetQuestionByIdParams) {
 				select: "_id name",
 			})) as QuestionType;
 
-		if (!question) throw new Error("Question not found");
+		if (!question) redirect("/not-found");
 		return question;
 	} catch (error) {
-		redirect("/not-found");
+		throw error;
 	}
 }
 

@@ -20,6 +20,18 @@ body {
 	.parseHtml p{
 		@apply text-dark-200 dark:text-light-800 !important;
 	}
+	.parseHtml pre {
+			white-space: pre-wrap !important;       /* css-3 */
+			white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+			white-space: -pre-wrap !important;      /* Opera 4-6 */
+			white-space: -o-pre-wrap !important;    /* Opera 7 */
+			word-wrap: break-word !important;       /* Internet Explorer 5.5+ */
+	}
+
+	.parseHtml code {
+		word-wrap: break-word !important;
+		white-space: pre-wrap !important; 
+	}
 
 	.right-sidebar {
 		width: 330px;
@@ -42,7 +54,7 @@ body {
 		@apply flex justify-start items-center;
 	}
 	.card-wrapper {
-		@apply bg-light-900 dark:dark-gradient  shadow-light-100 dark:bg-dark-300 rounded-lg border border-light-400/10 px-11 py-9 dark:border-dark-200;
+		@apply bg-light-900 dark:dark-gradient  shadow-light-100 dark:bg-dark-300 rounded-lg border border-light-400/10 px-11 py-9 dark:border-dark-200 max-sm:px-4 max-sm:py-4;
 	}
 	.btn {
 		@apply bg-light-800 dark:bg-dark-300 !important;

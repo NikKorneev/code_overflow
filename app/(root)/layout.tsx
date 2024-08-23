@@ -18,7 +18,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 			<div className="sm:custom-grid">
 				<LeftSidebar curUsername={mongoUsername} />
 				<section className="col-start-2 col-end-3 flex min-h-screen flex-1 flex-col px-6 pb-6 pt-36 max-md:pb-14 sm:px-6 xl:px-10 ">
-					<div className="mx-auto w-full max-w-5xl">{children}</div>
+					<div className="mx-auto w-full">{children}</div>
 				</section>
 				<RightSidebar />
 			</div>
