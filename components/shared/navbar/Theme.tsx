@@ -6,13 +6,10 @@ import {
 	MenubarContent,
 	MenubarItem,
 	MenubarMenu,
-	MenubarSeparator,
-	MenubarShortcut,
 	MenubarTrigger,
 } from "@/components/ui/menubar";
 import Image from "next/image";
 import { themes } from "@/constants";
-import { Item } from "@radix-ui/react-menubar";
 
 const Theme = () => {
 	const { mode, setMode } = useTheme();
@@ -45,7 +42,7 @@ const Theme = () => {
 							onClick={() => {
 								setMode(theme.value);
 							}}
-							className="flex items-center gap-4 px-2.5 py-2 dark:focus:bg-dark-400"
+							className="flex cursor-pointer items-center gap-4 px-2.5 py-2  focus:bg-light-700 dark:focus:bg-dark-300"
 						>
 							<Image
 								src={theme.icon}

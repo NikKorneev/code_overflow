@@ -7,10 +7,14 @@ import Link from "next/link";
 import React from "react";
 import NoResult from "@/components/shared/NoResult";
 import { Question, SearchParamsProps } from "@/types";
-import { getQuestions } from "@/lib/actions/question.action";
+import {
+	getQuestions,
+	getRecommendedQuestions,
+} from "@/lib/actions/question.action";
 import QuestionCard from "@/components/shared/cards/QuestionCard";
 import Pagination from "@/components/shared/Pagination";
 import type { Metadata } from "next";
+import { auth } from "@clerk/nextjs/server";
 
 export const metadata: Metadata = {
 	title: "CodeOverflow",
@@ -25,14 +29,35 @@ export const metadata: Metadata = {
 };
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
-	const result = (await getQuestions({
-		searchQuery: searchParams?.q,
-		filter: searchParams?.filter,
-		page: searchParams?.page ? +searchParams?.page : 1,
-	})) as {
-		questions: Question[];
-		isNext: boolean;
-	};
+	const { userId } = auth();
+	let result;
+
+	if (searchParams?.filter === "recommended") {
+		if (userId) {
+			result = (await getRecommendedQuestions({
+				userId,
+				searchQuery: searchParams?.q,
+				page: searchParams?.page ? +searchParams?.page : 1,
+			})) as {
+				questions: Question[];
+				isNext: boolean;
+			};
+		} else {
+			result = {
+				questions: [],
+				isNext: false,
+			};
+		}
+	} else {
+		result = (await getQuestions({
+			searchQuery: searchParams?.q,
+			filter: searchParams?.filter,
+			page: searchParams?.page ? +searchParams?.page : 1,
+		})) as {
+			questions: Question[];
+			isNext: boolean;
+		};
+	}
 
 	return (
 		<>

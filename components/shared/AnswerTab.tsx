@@ -22,7 +22,7 @@ const AnswerTab = async ({ userId, searchParams, clerkId }: Props) => {
 	return (
 		<>
 			{answers.length > 0 && (
-				<div className="grid grid-cols-1 md:grid-cols-2">
+				<div className="grid grid-cols-1 gap-1 md:grid-cols-2">
 					{answers.map((answer) => (
 						<AnswerCard
 							currentUserId={currentUserId!}

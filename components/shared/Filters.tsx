@@ -54,7 +54,7 @@ const Filters = ({ filters, containerClasses, otherClasses }: FiltersProps) => {
 							<SelectItem
 								key={filter.value}
 								value={filter.value}
-								className="text-dark500_light700 transition-colors hover:bg-neutral-200 dark:hover:bg-slate-900"
+								className="text-dark500_light700 cursor-pointer transition-colors hover:bg-neutral-200 dark:hover:bg-slate-900"
 							>
 								{filter.name}
 							</SelectItem>
