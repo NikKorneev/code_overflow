@@ -13,6 +13,8 @@ export const metadata: Metadata = {
 	description: "CodeOverflow - all active and genius users",
 	twitter: {
 		images: "/assets/images/twitter-card.png",
+		description: "CodeOverflow - all active and genius users",
+		title: "Users | CodeOverflow",
 	},
 	openGraph: {
 		images: "/assets/images/twitter-card.png",

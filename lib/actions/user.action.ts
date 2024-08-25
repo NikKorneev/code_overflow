@@ -18,6 +18,7 @@ import Answer from "@/db/answer.model";
 import { FilterQuery } from "mongoose";
 import { assingBadges, escapeRegExp } from "../utils";
 import { BadgeCriteriaType, BadgeParam } from "@/types";
+import Interaction from "@/db/interaction.model";
 
 type Params = {
 	userId: string;
@@ -131,13 +132,64 @@ export async function getUsers({
 				sortOptions = { reputation: -1 };
 				break;
 			default:
+				sortOptions = { createdAt: -1 };
 				break;
 		}
 
-		const users = await User.find(query)
-			.skip(skipAmount)
-			.limit(pageSize)
-			.sort(sortOptions);
+		// const users = await User.find(query)
+		// 	.skip(skipAmount)
+		// 	.limit(pageSize)
+		// 	.sort(sortOptions);
+
+		const users = await User.aggregate([
+			// Этап фильтрации по имени или никнейму
+			{ $match: query },
+			// Соединяем с коллекцией Interaction
+			{
+				$lookup: {
+					from: "interactions",
+					localField: "_id",
+					foreignField: "user",
+					as: "interactions",
+				},
+			},
+			// Разворачиваем массив взаимодействий
+			{
+				$unwind: {
+					path: "$interactions",
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			// Сортируем взаимодействия по дате создания
+			{ $sort: { "interactions.createdAt": -1 } },
+			// Группируем по пользователю
+			{
+				$group: {
+					_id: "$_id",
+					user: { $first: "$$ROOT" },
+					lastTags: { $first: "$interactions.tags" },
+				},
+			},
+			{
+				$lookup: {
+					from: "tags",
+					localField: "lastTags",
+					foreignField: "_id",
+					as: "lastTags",
+				},
+			},
+			// Формируем финальный результат
+			{
+				$project: {
+					_id: "$user._id",
+					name: "$user.name",
+					username: "$user.username",
+					email: "$user.email",
+					picture: "$user.picture",
+					lastTags: 1,
+				},
+			},
+		]);
 
 		const totalUsers = await User.countDocuments(query);
 

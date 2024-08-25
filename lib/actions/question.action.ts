@@ -428,7 +428,7 @@ export const getRecommendedQuestions = async (params: RecommendedParams) => {
 			.exec();
 
 		const userTags = await userInteractions.reduce((tags, interaction) => {
-			if (interaction.tag) {
+			if (interaction.tags) {
 				tags = tags.concat(interaction.tags);
 			}
 

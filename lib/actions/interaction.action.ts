@@ -30,12 +30,17 @@ export async function viewQuestion({ questionId, userId }: ViewQuestionParams) {
 				action: "view",
 				question: questionId,
 			});
-			if (existingInteraction) return;
+			if (existingInteraction) {
+				existingInteraction.tags = question.tags;
+				await existingInteraction.save();
+				return;
+			}
 
 			await Interaction.create({
 				user: userId,
 				action: "view",
 				question: questionId,
+				tags: question.tags || [],
 			});
 		}
 	} catch (error) {

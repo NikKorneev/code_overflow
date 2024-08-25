@@ -1,4 +1,3 @@
-import { getUserTags } from "@/lib/actions/tag.action";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -11,14 +10,11 @@ type Props = {
 		picture: string;
 		name: string;
 		username: string;
+		lastTags?: any[];
 	};
 };
 
 const UserCard = async ({ user }: Props) => {
-	const interactedTags = await getUserTags({
-		userId: user._id,
-	});
-
 	return (
 		<article className="background-light900_dark200 light-border flex w-full flex-col items-center justify-center rounded-2xl border p-8 ">
 			<Link
@@ -43,9 +39,9 @@ const UserCard = async ({ user }: Props) => {
 			</Link>
 
 			<div className="mt-5">
-				{interactedTags.length > 0 ? (
+				{user.lastTags && user.lastTags.length > 0 ? (
 					<div className="flex items-center gap-2">
-						{interactedTags.map((item) => (
+						{user.lastTags.map((item) => (
 							<RenderTag
 								key={item._id}
 								_id={item._id}
@@ -54,7 +50,7 @@ const UserCard = async ({ user }: Props) => {
 						))}
 					</div>
 				) : (
-					<Badge> No tags</Badge>
+					<Badge> This user has not interacted yet</Badge>
 				)}
 			</div>
 		</article>

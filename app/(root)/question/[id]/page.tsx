@@ -20,12 +20,16 @@ export async function generateMetadata({
 
 	return {
 		title: `${question.title} | CodeOverflow`,
-		description: `Question "${question.title}" asked by ${question.author.username}`,
+		description: `${question.title} asked by ${question.author.username}`,
 		twitter: {
 			images: "/assets/images/twitter-card.png",
+			description: `${question.title} asked by ${question.author.username}`,
+			title: `${question.title} | CodeOverflow`,
 		},
 		openGraph: {
 			images: "/assets/images/twitter-card.png",
+			description: `${question.title} asked by ${question.author.username}`,
+			title: `${question.title} | CodeOverflow`,
 		},
 	};
 }

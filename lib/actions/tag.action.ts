@@ -15,37 +15,37 @@ import { redirect } from "next/navigation";
 import console from "console";
 import { escapeRegExp } from "../utils";
 
-export async function getUserTags({
-	userId,
-	limit,
-}: GetTopInteractedTagsParams) {
-	try {
-		connectToDatabase();
+// export async function getUserTags({
+// 	userId,
+// 	limit,
+// }: GetTopInteractedTagsParams) {
+// 	try {
+// 		connectToDatabase();
 
-		const user = await User.findById(userId);
+// 		const user = await User.findById(userId);
 
-		if (!user) throw new Error("User not found");
+// 		if (!user) throw new Error("User not found");
 
-		// interaction
+// 		// interaction
 
-		return [
-			{
-				_id: "tag1",
-				name: "tag1",
-			},
-			{
-				_id: "tag2",
-				name: "tag2",
-			},
-			{
-				_id: "tag3",
-				name: "tag3",
-			},
-		];
-	} catch (error) {
-		throw error;
-	}
-}
+// 		return [
+// 			{
+// 				_id: "tag1",
+// 				name: "tag1",
+// 			},
+// 			{
+// 				_id: "tag2",
+// 				name: "tag2",
+// 			},
+// 			{
+// 				_id: "tag3",
+// 				name: "tag3",
+// 			},
+// 		];
+// 	} catch (error) {
+// 		throw error;
+// 	}
+// }
 
 export async function getAllTags({
 	filter,
