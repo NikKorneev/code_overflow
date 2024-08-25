@@ -19,7 +19,7 @@ const QuestionTab = async ({ userId, searchParams, clerkId }: Props) => {
 
 	return (
 		<>
-			<div className="grid grid-cols-1 md:grid-cols-2">
+			<div className="grid grid-cols-1 gap-1 md:grid-cols-2">
 				{questions.length > 0 &&
 					questions.map((question) => (
 						<QuestionCard

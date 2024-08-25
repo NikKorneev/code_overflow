@@ -9,8 +9,28 @@ import { getDate } from "@/lib/utils";
 import { URLProps } from "@/types";
 import { SignedIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+
+export async function generateMetadata({
+	params,
+}: URLProps): Promise<Metadata> {
+	const { user } = await getUserProfile({
+		username: params.id,
+	});
+
+	return {
+		title: `Profile page - ${user.username} | CodeOverflow`,
+		description: `${user.username}'s profile on CodeOverflow`,
+		twitter: {
+			images: "/assets/images/twitter-card.png",
+		},
+		openGraph: {
+			images: "/assets/images/twitter-card.png",
+		},
+	};
+}
 
 const Page = async ({ params, searchParams }: URLProps) => {
 	const { userId } = auth();

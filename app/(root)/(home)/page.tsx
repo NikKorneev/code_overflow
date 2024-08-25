@@ -10,6 +10,19 @@ import { Question, SearchParamsProps } from "@/types";
 import { getQuestions } from "@/lib/actions/question.action";
 import QuestionCard from "@/components/shared/cards/QuestionCard";
 import Pagination from "@/components/shared/Pagination";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "CodeOverflow",
+	description:
+		"CodeOverflow is a community-driven platform for sharing answers to code-related questions.",
+	twitter: {
+		images: "/assets/images/twitter-card.png",
+	},
+	openGraph: {
+		images: "/assets/images/twitter-card.png",
+	},
+};
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
 	const result = (await getQuestions({

@@ -8,8 +8,8 @@ import {
 import { saveQuestion } from "@/lib/actions/user.action";
 import { getCountToString } from "@/lib/utils";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect, useOptimistic, useState } from "react";
+import { toast } from "../ui/use-toast";
 
 type VotesProps = {
 	type: "question" | "answer";
@@ -32,15 +32,44 @@ const Votes = ({
 	userId,
 }: VotesProps) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const router = useRouter();
+	const [isOptimisticUpvoted, setIsOptimisticUpvoted] = useOptimistic<
+		boolean,
+		boolean
+	>(hasUpvoted, (state, value) => value);
+	const [optimisticUpvotes, setOptimisticUpvotes] = useOptimistic<
+		number,
+		number
+	>(upvotes, (state, value) => value);
+	const [optimisticDownvotes, setOptimisticDownvotes] = useOptimistic<
+		number,
+		number
+	>(downvotes, (state, value) => value);
+
+	const [isOptimisticDownvoted, setIsOptimisticDownvoted] = useOptimistic<
+		boolean,
+		boolean
+	>(hasDownvoted, (state, value) => value);
+
+	const [isOptimisticSaved, setIsOptimisticSaved] = useOptimistic<
+		boolean,
+		boolean
+	>(!!hasSaved, (state, value) => value);
+
 	const handleVote = async (voteType: "upvote" | "downvote") => {
 		if (!userId) {
-			router.push("/sign-in");
-			return;
+			return toast({
+				title: "Sign in required",
+				description: "You must be logged in to perform this action",
+				variant: "destructive",
+			});
 		}
 
 		setIsSubmitting(true);
 		if (voteType === "upvote" && type === "question") {
+			setIsOptimisticUpvoted(hasUpvoted ? false : true);
+			setIsOptimisticDownvoted(false);
+			setOptimisticUpvotes(hasUpvoted ? upvotes - 1 : upvotes + 1);
+			setOptimisticDownvotes(hasDownvoted ? downvotes - 1 : downvotes);
 			await upvoteQuestion({
 				hasupVoted: hasUpvoted,
 				path: `/question/${targetId}`,
@@ -48,7 +77,18 @@ const Votes = ({
 				userId: JSON.parse(userId),
 				hasdownVoted: hasDownvoted,
 			});
+
+			toast({
+				title: hasUpvoted ? "Question unvoted" : "Question upvoted",
+				variant: "default",
+			});
 		} else if (voteType === "downvote" && type === "question") {
+			setIsOptimisticDownvoted(hasDownvoted ? false : true);
+			setIsOptimisticUpvoted(false);
+			setOptimisticDownvotes(
+				hasDownvoted ? downvotes - 1 : downvotes + 1
+			);
+			setOptimisticUpvotes(hasUpvoted ? upvotes - 1 : upvotes);
 			await downvoteQuestion({
 				questionId: JSON.parse(targetId),
 				userId: JSON.parse(userId),
@@ -56,7 +96,15 @@ const Votes = ({
 				path: `/question/${targetId}`,
 				hasupVoted: hasUpvoted,
 			});
+			toast({
+				title: hasDownvoted ? "Question unvoted" : "Question downvoted",
+				variant: "destructive",
+			});
 		} else if (voteType === "upvote" && type === "answer") {
+			setIsOptimisticUpvoted(hasUpvoted ? false : true);
+			setIsOptimisticDownvoted(false);
+			setOptimisticUpvotes(hasUpvoted ? upvotes - 1 : upvotes + 1);
+			setOptimisticDownvotes(hasDownvoted ? downvotes - 1 : downvotes);
 			await upvoteAnswer({
 				answerId: JSON.parse(targetId),
 				userId: JSON.parse(userId),
@@ -64,7 +112,17 @@ const Votes = ({
 				path: `/question/${targetId}`,
 				hasdownVoted: hasDownvoted,
 			});
+			toast({
+				title: hasUpvoted ? "Answer unvoted" : "Answer upvoted",
+				variant: "default",
+			});
 		} else if (voteType === "downvote" && type === "answer") {
+			setIsOptimisticDownvoted(hasDownvoted ? false : true);
+			setIsOptimisticUpvoted(false);
+			setOptimisticDownvotes(
+				hasDownvoted ? downvotes - 1 : downvotes + 1
+			);
+			setOptimisticUpvotes(hasUpvoted ? upvotes - 1 : upvotes);
 			await downvoteAnswer({
 				answerId: JSON.parse(targetId),
 				userId: JSON.parse(userId),
@@ -72,22 +130,34 @@ const Votes = ({
 				path: `/question/${targetId}`,
 				hasupVoted: hasUpvoted,
 			});
+			toast({
+				title: hasDownvoted ? "Answer unvoted" : "Answer downvoted",
+				variant: "destructive",
+			});
 		}
 		setIsSubmitting(false);
 	};
 
 	const handleSave = async () => {
 		if (!userId) {
-			router.push("/sign-in");
-			return;
+			return toast({
+				title: "Sign in required",
+				description: "You must be logged in to perform this action",
+				variant: "destructive",
+			});
 		}
 
 		setIsSubmitting(true);
+		setIsOptimisticSaved(hasSaved ? false : true);
 		await saveQuestion({
 			hasSaved: hasSaved!,
 			path: `/question/${targetId}`,
 			questionId: JSON.parse(targetId),
 			userId: JSON.parse(userId),
+		});
+		toast({
+			title: hasSaved ? "Question removed from saved" : "Question saved",
+			variant: hasSaved ? "destructive" : "default",
 		});
 		setIsSubmitting(false);
 	};
@@ -117,7 +187,7 @@ const Votes = ({
 				<div className="flex-center gap-1.5">
 					<Image
 						src={
-							hasUpvoted
+							isOptimisticUpvoted
 								? "/assets/icons/upvoted.svg"
 								: "/assets/icons/upvote.svg"
 						}
@@ -132,7 +202,7 @@ const Votes = ({
 					/>
 					<div className="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1">
 						<p className="subtle-medium text-dark400_light900">
-							{getCountToString(upvotes)}
+							{getCountToString(optimisticUpvotes)}
 						</p>
 					</div>
 				</div>
@@ -141,7 +211,7 @@ const Votes = ({
 				<div className="flex-center gap-1.5">
 					<Image
 						src={
-							hasDownvoted
+							isOptimisticDownvoted
 								? "/assets/icons/downvoted.svg"
 								: "/assets/icons/downvote.svg"
 						}
@@ -156,7 +226,7 @@ const Votes = ({
 					/>
 					<div className="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1">
 						<p className="subtle-medium text-dark400_light900">
-							{getCountToString(downvotes)}
+							{getCountToString(optimisticDownvotes)}
 						</p>
 					</div>
 				</div>
@@ -164,7 +234,7 @@ const Votes = ({
 			{type === "question" && (
 				<Image
 					src={
-						hasSaved
+						isOptimisticSaved
 							? "/assets/icons/star-filled.svg"
 							: "/assets/icons/star-red.svg"
 					}

@@ -4,6 +4,29 @@ import Pagination from "@/components/shared/Pagination";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { getQuestionsByTagId } from "@/lib/actions/tag.action";
 import { URLProps } from "@/types";
+import { ResolvingMetadata, Metadata } from "next";
+
+export async function generateMetadata(
+	{ params, searchParams }: URLProps,
+	parent: ResolvingMetadata
+): Promise<Metadata> {
+	// read route params
+	const { tagTitle } = await getQuestionsByTagId({
+		tagId: params.id,
+		pageSize: 1,
+	});
+
+	return {
+		title: `${tagTitle} tag | CodeOverflow`,
+		description: `See all questions related with ${tagTitle} tag`,
+		twitter: {
+			images: "/assets/images/twitter-card.png",
+		},
+		openGraph: {
+			images: "/assets/images/twitter-card.png",
+		},
+	};
+}
 
 const Page = async ({ params, searchParams }: URLProps) => {
 	const { questions, tagTitle, isNext } = await getQuestionsByTagId({

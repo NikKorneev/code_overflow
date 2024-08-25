@@ -1,8 +1,20 @@
 import QuestionForm from "@/components/forms/QuestionForm";
 import { getUserById } from "@/lib/actions/user.action";
 import { auth } from "@clerk/nextjs/server";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import React from "react";
+
+export const metadata: Metadata = {
+	title: "Ask a Question | CodeOverflow",
+	description:
+		"CodeOverflow is a community-driven platform for sharing answers to code-related questions.",
+	twitter: {
+		images: "/assets/images/twitter-card.png",
+	},
+	openGraph: {
+		images: "/assets/images/twitter-card.png",
+	},
+};
 
 const AskQuestion = async () => {
 	const { userId } = auth();

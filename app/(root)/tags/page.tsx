@@ -6,7 +6,18 @@ import LocalSearch from "@/components/shared/search/LocalSearch";
 import { TagFilters } from "@/constants/filters";
 import { getAllTags } from "@/lib/actions/tag.action";
 import { SearchParamsProps } from "@/types";
-import React from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Tags | CodeOverflow",
+	description: "CodeOverflow - search for all used and popular tags",
+	twitter: {
+		images: "/assets/images/twitter-card.png",
+	},
+	openGraph: {
+		images: "/assets/images/twitter-card.png",
+	},
+};
 
 const Page = async ({ searchParams }: SearchParamsProps) => {
 	const { tags, isNext } = await getAllTags({
@@ -33,7 +44,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
 
 			<section className="mt-12 ">
 				{tags?.length > 0 ? (
-					<div className=" flex flex-wrap gap-4">
+					<div className=" flex flex-wrap justify-between gap-4">
 						{tags.map((item) => (
 							<TagCard
 								_id={item._id}

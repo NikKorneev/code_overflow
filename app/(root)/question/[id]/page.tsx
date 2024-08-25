@@ -1,6 +1,5 @@
 import AnswerForm from "@/components/forms/AnswerForm";
 import AllAnswers from "@/components/shared/AllAnswers";
-import EditDeleteAction from "@/components/shared/EditDeleteAction";
 import Metric from "@/components/shared/Metric";
 import ParseHTML from "@/components/shared/ParseHTML";
 import RenderTag from "@/components/shared/RenderTag";
@@ -9,17 +8,27 @@ import { getQuestionById } from "@/lib/actions/question.action";
 import { getUserById } from "@/lib/actions/user.action";
 import { getTimestamp } from "@/lib/utils";
 import { URLProps } from "@/types";
-import { SignedIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
-type Params = {
-	params: {
-		id: string;
+export async function generateMetadata({
+	params,
+}: URLProps): Promise<Metadata> {
+	const question = await getQuestionById({ questionId: params.id });
+
+	return {
+		title: `${question.title} | CodeOverflow`,
+		description: `Question "${question.title}" asked by ${question.author.username}`,
+		twitter: {
+			images: "/assets/images/twitter-card.png",
+		},
+		openGraph: {
+			images: "/assets/images/twitter-card.png",
+		},
 	};
-};
+}
 
 const Page = async ({ params, searchParams }: URLProps) => {
 	const question = await getQuestionById({ questionId: params.id });

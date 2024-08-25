@@ -3,6 +3,7 @@ import { deleteAnswer } from "@/lib/actions/answer.action";
 import { deleteQuestion } from "@/lib/actions/question.action";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { toast } from "../ui/use-toast";
 type Props = {
 	type: "Question" | "Answer";
 	itemId: string;
@@ -22,10 +23,18 @@ const EditDeleteAction = ({ itemId, type }: Props) => {
 				questionId: JSON.parse(itemId),
 				path: pathname,
 			});
+			return toast({
+				title: "Question deleted",
+				variant: "destructive",
+			});
 		} else if (type === "Answer" && itemId) {
 			await deleteAnswer({
 				answerId: JSON.parse(itemId),
 				path: pathname,
+			});
+			return toast({
+				title: "Answer deleted",
+				variant: "destructive",
 			});
 		}
 	};

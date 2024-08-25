@@ -9,7 +9,18 @@ import QuestionCard from "@/components/shared/cards/QuestionCard";
 import { auth } from "@clerk/nextjs/server";
 import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+	title: "Saved Questions | CodeOverflow",
+	description: "Saved questions on CodeOverflow.",
+	twitter: {
+		images: "/assets/images/twitter-card.png",
+	},
+	openGraph: {
+		images: "/assets/images/twitter-card.png",
+	},
+};
 const Collection = async ({ searchParams }: SearchParamsProps) => {
 	const { userId } = auth();
 

@@ -5,8 +5,19 @@ import LocalSearch from "@/components/shared/search/LocalSearch";
 import { UserFilters } from "@/constants/filters";
 import { getUsers } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
+import { Metadata } from "next";
 import Link from "next/link";
 
+export const metadata: Metadata = {
+	title: "Users | CodeOverflow",
+	description: "CodeOverflow - all active and genius users",
+	twitter: {
+		images: "/assets/images/twitter-card.png",
+	},
+	openGraph: {
+		images: "/assets/images/twitter-card.png",
+	},
+};
 const Page = async ({ searchParams }: SearchParamsProps) => {
 	const { users, isNext } = await getUsers({
 		searchQuery: searchParams?.q,
@@ -30,7 +41,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
 				/>
 			</div>
 
-			<section className="mt-12 flex flex-wrap gap-4">
+			<section className="users-grid mt-12">
 				{users.length > 0 ? (
 					users.map((user) => <UserCard key={user._id} user={user} />)
 				) : (

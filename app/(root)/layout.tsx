@@ -1,6 +1,7 @@
 import Navbar from "@/components/shared/navbar/Navbar";
 import LeftSidebar from "@/components/shared/sidebars/LeftSidebar";
 import RightSidebar from "@/components/shared/sidebars/RightSidebar";
+import { Toaster } from "@/components/ui/toaster";
 import { getUserById } from "@/lib/actions/user.action";
 import { auth } from "@clerk/nextjs/server";
 
@@ -22,6 +23,8 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 				</section>
 				<RightSidebar />
 			</div>
+
+			<Toaster />
 		</main>
 	);
 };

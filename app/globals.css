@@ -20,6 +20,7 @@ body {
 	.parseHtml p{
 		@apply text-dark-200 dark:text-light-800 !important;
 	}
+
 	.parseHtml pre {
 			white-space: pre-wrap !important;       /* css-3 */
 			white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
@@ -42,6 +43,12 @@ body {
 	.custom-grid {
 		display: grid;
 		grid-template-columns: 266px 1fr 330px;
+	}
+	.users-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		justify-items: center;
+		gap: 16px;
 	}
 
 	.flex-center {
